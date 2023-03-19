@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CORE.Loyal\CORE.Loyal.csproj" />
+    <ProjectReference Include="..\SUPPORT.Loyal\SUPPORT.Loyal.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NPOI" Version="2.6.0" />
+  </ItemGroup>
+
+</Project>
