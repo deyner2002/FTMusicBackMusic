@@ -58,5 +58,22 @@ namespace Core.Loyal.Services
             return cancion;
         }
 
+
+
+
+        public async Task<long> DesactivarCancion(int id)
+        {
+            long salida = -1;
+            try
+            {
+                salida = await _provider.DesactivarCancion(id);
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+            }
+            return salida;
+        }
+
     }
 }

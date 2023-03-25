@@ -125,5 +125,45 @@ namespace Api.Loyal.Controllers
 
 
 
+
+        [HttpGet]
+        [Route("DesactivarCancion")]
+        public async Task<ResponseModels> DesactivarCancion(int id)
+        {
+            ResponseModels response = new ResponseModels();
+
+            try
+            {
+                response.Datos = _provider.DesactivarCancion(id).Result;
+                long codigoRespuesta = long.Parse(response.Datos.ToString());
+                if (codigoRespuesta == 1)
+                {
+                    response.IsError = false;
+                    response.Mensaje = "Cancion Desactivada";
+                }
+                if (codigoRespuesta == 0)
+                {
+                    response.IsError = true;
+                    response.Mensaje = "La cancion a desactivar no existe";
+                }
+                if (codigoRespuesta == -1)
+                {
+                    response.IsError = true;
+                    response.Mensaje = "Error";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+                response.IsError = true;
+                response.Mensaje = "Error en obtener datos";
+            }
+
+            return response;
+        }
+
+
+
     }
 }

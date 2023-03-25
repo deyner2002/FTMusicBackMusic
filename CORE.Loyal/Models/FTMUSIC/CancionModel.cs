@@ -11,5 +11,6 @@
         public DateTime? FechaPublicacion { get; set; }
         public long? NumeroMegusta { get; set; }
         public string? Link { get; set; }
+        public string? Estado { get; set; }
     }
 }

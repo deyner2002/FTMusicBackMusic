@@ -26,7 +26,7 @@ namespace Core.Loyal.Providers
             {
                 await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.OpenAsync();
                 
-                cmd.CommandText = "SELECT ID, IDUSUARIO, IDALBUN, NOMBRE,GENERO,LETRA,FECHAPUBLICACION,NUMEROMEGUSTA,LINK FROM CANCIONES";
+                cmd.CommandText = "SELECT ID, IDUSUARIO, IDALBUN, NOMBRE,GENERO,LETRA,FECHAPUBLICACION,NUMEROMEGUSTA,LINK FROM CANCIONES WHERE ESTADO='A'";
                 await cmd.ExecuteNonQueryAsync();
 
                 var adapter = new OracleDataAdapter(cmd);
@@ -76,8 +76,8 @@ namespace Core.Loyal.Providers
                     await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.OpenAsync();
                     cmd.CommandText = @"
                                         INSERT INTO CANCIONES
-                                        (ID, IDUSUARIO, IDALBUN, NOMBRE,GENERO,LETRA,FECHAPUBLICACION,NUMEROMEGUSTA,LINK)
-                                        VALUES(SEQUENCECANCION.NEXTVAL,:P_IDUSUARIO,:P_IDALBUN ,:P_NOMBRE, :P_GENERO, :P_LETRA,CURRENT_DATE,0,:P_LINK)
+                                        (ID, IDUSUARIO, IDALBUN, NOMBRE,GENERO,LETRA,FECHAPUBLICACION,NUMEROMEGUSTA,LINK,ESTADO)
+                                        VALUES(SEQUENCECANCION.NEXTVAL,:P_IDUSUARIO,:P_IDALBUN ,:P_NOMBRE, :P_GENERO, :P_LETRA,CURRENT_DATE,0,:P_LINK,'A')
                                         ";
                     cmd.Parameters.Clear();
                     cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDUSUARIO", Value = cancion.IdUsuario });
@@ -134,7 +134,7 @@ namespace Core.Loyal.Providers
             {
                 await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.OpenAsync();
 
-                cmd.CommandText = "SELECT ID, IDUSUARIO, IDALBUN, NOMBRE,GENERO,LETRA,FECHAPUBLICACION,NUMEROMEGUSTA,LINK FROM CANCIONES WHERE ID=:P_ID";
+                cmd.CommandText = "SELECT ID, IDUSUARIO, IDALBUN, NOMBRE,GENERO,LETRA,FECHAPUBLICACION,NUMEROMEGUSTA,LINK FROM CANCIONES WHERE ID=:P_ID AND ESTADO='A'";
                 cmd.Parameters.Clear();
                 cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Varchar2, Direction = ParameterDirection.Input, ParameterName = "P_ID", Value = id });
                 await cmd.ExecuteNonQueryAsync();
@@ -179,6 +179,56 @@ namespace Core.Loyal.Providers
             return null;
         }
 
+
+
+
+
+
+        public async Task<long> DesactivarCancion(int id)
+        {
+            var _outs = new List<CancionModel>();
+            try
+            {
+                await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.OpenAsync();
+
+                cmd.CommandText = "SELECT ID, IDUSUARIO, IDALBUN, NOMBRE,GENERO,LETRA,FECHAPUBLICACION,NUMEROMEGUSTA,LINK FROM CANCIONES WHERE ID=:P_ID AND ESTADO='A'";
+                cmd.Parameters.Clear();
+                cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Varchar2, Direction = ParameterDirection.Input, ParameterName = "P_ID", Value = id });
+                await cmd.ExecuteNonQueryAsync();
+
+                var adapter = new OracleDataAdapter(cmd);
+                var data = new DataSet("Datos");
+                adapter.Fill(data);
+
+                await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.CloseAsync();
+
+                if (data.Tables[0].Rows.Count > 0)
+                {
+                    await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.OpenAsync();
+                    cmd.CommandText = @"
+                                        UPDATE CANCIONES SET
+                                        ESTADO='I'
+                                        WHERE ID=:P_ID
+                                        ";
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Varchar2, Direction = ParameterDirection.Input, ParameterName = "P_ID", Value = id });
+                    await cmd.ExecuteNonQueryAsync();
+                    await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.CloseAsync();
+                    return 1;
+                }
+                else
+                {
+                    return 0;
+                }
+
+                
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+            }
+            return -1;
+        }
 
 
 
