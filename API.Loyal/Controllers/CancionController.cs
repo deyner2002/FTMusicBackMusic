@@ -87,5 +87,43 @@ namespace Api.Loyal.Controllers
 
             return response;
         }
+
+
+
+
+
+        [HttpGet]
+        [Route("ConsultarCancion")]
+        public async Task<ResponseModels> ConsultarCancion(int id)
+        {
+            ResponseModels response = new ResponseModels();
+
+            try
+            {
+                response.Datos = _provider.ConsultarCancion(id).Result;
+                if (response.Datos != null)
+                {
+                    response.IsError = false;
+                    response.Mensaje = "Ok";
+                }
+                else
+                {
+                    response.IsError = true;
+                    response.Mensaje = "La cancion consultada no existe";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+                response.IsError = true;
+                response.Mensaje = "Error en obtener datos";
+            }
+
+            return response;
+        }
+
+
+
     }
 }

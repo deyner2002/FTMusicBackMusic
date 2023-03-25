@@ -41,5 +41,22 @@ namespace Core.Loyal.Services
             return consecutivo;
         }
 
+
+
+
+        public async Task<CancionModel> ConsultarCancion(int id)
+        {
+            CancionModel cancion =new CancionModel();
+            try
+            {
+                cancion = await _provider.ConsultarCancion(id);
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+            }
+            return cancion;
+        }
+
     }
 }

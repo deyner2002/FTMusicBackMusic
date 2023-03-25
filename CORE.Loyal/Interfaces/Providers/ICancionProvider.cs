@@ -6,5 +6,6 @@ namespace CORE.Loyal.Interfaces.Providers
     {
         Task<List<CancionModel>> GetList();
         Task<long> SaveCancion(CancionModel user);
+        Task<CancionModel> ConsultarCancion(int id);
     }
 }
