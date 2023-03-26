@@ -8,5 +8,7 @@ namespace CORE.Loyal.Interfaces.Providers
         Task<long> SaveCancion(CancionModel user);
         Task<CancionModel> ConsultarCancion(int id);
         Task<long> DesactivarCancion(int id);
+
+        Task<long> ModificarCancion(CancionModel cancion);
     }
 }

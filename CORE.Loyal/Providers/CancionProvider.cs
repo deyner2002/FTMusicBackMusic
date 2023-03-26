@@ -118,6 +118,7 @@ namespace Core.Loyal.Providers
             }
             catch (Exception ex)
             {
+                await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.CloseAsync();
                 Plugins.WriteExceptionLog(ex);
                 return -1;
             }
@@ -175,6 +176,7 @@ namespace Core.Loyal.Providers
             catch (Exception ex)
             {
                 Plugins.WriteExceptionLog(ex);
+                await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.CloseAsync();
             }
             return null;
         }
@@ -225,11 +227,86 @@ namespace Core.Loyal.Providers
             }
             catch (Exception ex)
             {
+                await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.CloseAsync();
                 Plugins.WriteExceptionLog(ex);
             }
             return -1;
         }
 
+
+
+
+
+
+        public async Task<long> ModificarCancion(CancionModel cancion)
+        {
+            try
+            {
+
+                if (cancion.Nombre != null && cancion.Letra != null)
+                {
+                    await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.OpenAsync();
+
+                    cmd.CommandText = @"
+                                        SELECT ID, IDUSUARIO, IDALBUN, NOMBRE,GENERO,LETRA,FECHAPUBLICACION,NUMEROMEGUSTA,LINK FROM CANCIONES WHERE ID=:P_IDB AND ESTADO='A'
+                                        ";
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Varchar2, Direction = ParameterDirection.Input, ParameterName = "P_IDB", Value = cancion.Id });
+                    await cmd.ExecuteNonQueryAsync();
+
+                    var adapter = new OracleDataAdapter(cmd);
+                    var data = new DataSet("Datos");
+                    adapter.Fill(data);
+
+
+
+                    if (data.Tables[0].Rows.Count == 1)
+                    {
+
+                        cmd.CommandText = @"
+                                        UPDATE DBMUSICFTMUSIC.CANCIONES SET 
+                                        IDUSUARIO=:P_IDUSUARIO,
+                                        IDALBUN=:P_IDALBUN,
+                                        NOMBRE=:P_NOMBRE,
+                                        GENERO=:P_GENERO,
+                                        LETRA=:P_LETRA,
+                                        LINK=:P_LINK
+                                        WHERE ID = :P_ID AND ESTADO ='A'
+                                        ";
+                        cmd.Parameters.Clear();
+                        cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDUSUARIO", Value = cancion.IdUsuario });
+                        cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDALBUN", Value = cancion.IdAlbun });
+                        cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Varchar2, Direction = ParameterDirection.Input, ParameterName = "P_NOMBRE", Value = cancion.Nombre });
+                        cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Varchar2, Direction = ParameterDirection.Input, ParameterName = "P_GENERO", Value = cancion.Genero });
+                        cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Varchar2, Direction = ParameterDirection.Input, ParameterName = "P_LETRA", Value = cancion.Letra });
+                        cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Varchar2, Direction = ParameterDirection.Input, ParameterName = "P_LINK", Value = cancion.Link });
+                        cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_ID", Value = cancion.Id });
+                        await cmd.ExecuteNonQueryAsync();
+                        await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.CloseAsync();
+
+                    }
+                    else
+                    {
+                        return 0;//no existe
+                    }
+                    await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.CloseAsync();
+
+
+                    return 1;//todo bien
+                }
+                else
+                {
+                    return -2;//campos vacios
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.CloseAsync();
+                Plugins.WriteExceptionLog(ex);
+                return -1;//error
+            }
+        }
 
 
 

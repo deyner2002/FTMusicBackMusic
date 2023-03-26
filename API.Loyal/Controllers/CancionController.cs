@@ -165,5 +165,50 @@ namespace Api.Loyal.Controllers
 
 
 
+
+
+        [HttpPost]
+        [Route("ModificarCancion")]
+        public async Task<ResponseModels> ModificarCancion(CancionModel cancion)
+        {
+            ResponseModels response = new ResponseModels();
+
+            try
+            {
+                response.Datos = _provider.ModificarCancion(cancion).Result;
+                long codigoRespuesta = long.Parse(response.Datos.ToString());
+                if (codigoRespuesta == 1)
+                {
+                    response.IsError = false;
+                    response.Mensaje = "Cancion Modificada";
+                }
+                if (codigoRespuesta == 0)
+                {
+                    response.IsError = true;
+                    response.Mensaje = "La cancion a Modificar no existe";
+                }
+                if (codigoRespuesta == -1)
+                {
+                    response.IsError = true;
+                    response.Mensaje = "Error";
+                }
+                if (codigoRespuesta == -2)
+                {
+                    response.IsError = true;
+                    response.Mensaje = "Campos vacios";
+                }
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+                response.IsError = true;
+                response.Mensaje = "Error en obtener datos";
+            }
+
+            return response;
+        }
+
+
+
     }
 }

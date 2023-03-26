@@ -75,5 +75,19 @@ namespace Core.Loyal.Services
             return salida;
         }
 
+        public async Task<long> ModificarCancion(CancionModel cancion)
+        {
+            long salida = -1;
+            try
+            {
+                salida = await _provider.ModificarCancion(cancion);
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+            }
+            return salida;
+        }
+
     }
 }
