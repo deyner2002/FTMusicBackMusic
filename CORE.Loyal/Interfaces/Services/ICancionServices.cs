@@ -10,5 +10,7 @@ namespace CORE.Loyal.Interfaces.Services
         Task<long> DesactivarCancion(int id);
         Task<long> ModificarCancion(CancionModel cancion);
 
+        Task<List<CancionModel>> ConsultarCancionPorUsuario(int idUsuario);
+
     }
 }

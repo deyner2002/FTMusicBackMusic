@@ -89,5 +89,24 @@ namespace Core.Loyal.Services
             return salida;
         }
 
+
+
+
+        public async Task<List<CancionModel>> ConsultarCancionPorUsuario(int idUsuario)
+        {
+            List<CancionModel> list = new List<CancionModel>();
+            try
+            {
+                list = await _provider.ConsultarCancionPorUsuario(idUsuario);
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+            }
+            return list;
+        }
+
+
+
     }
 }

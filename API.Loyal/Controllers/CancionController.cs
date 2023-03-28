@@ -210,5 +210,44 @@ namespace Api.Loyal.Controllers
 
 
 
+
+
+
+
+        [HttpGet]
+        [Route("ConsultarCancionPorUsuario")]
+        public async Task<ResponseModels> ConsutlarCancionPorUsuario(int idUsuario)
+        {
+            ResponseModels response = new ResponseModels();
+
+            try
+            {
+                response.Datos = _provider.ConsultarCancionPorUsuario(idUsuario).Result;
+                if (response.Datos != null)
+                {
+                    response.IsError = false;
+                    response.Mensaje = "Ok";
+                }
+                else
+                {
+                    response.IsError = true;
+                    response.Mensaje = "No se encontraron canciones de este usuario";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+                response.IsError = true;
+                response.Mensaje = "Error en obtener datos";
+            }
+
+            return response;
+        }
+
+
+
+
+
     }
 }

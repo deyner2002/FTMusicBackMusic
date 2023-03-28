@@ -311,5 +311,64 @@ namespace Core.Loyal.Providers
 
 
 
+
+
+
+
+        public async Task<List<CancionModel>> ConsultarCancionPorUsuario(int idUsuario)
+        {
+            var _outs = new List<CancionModel>();
+            try
+            {
+                await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.OpenAsync();
+
+                cmd.CommandText = "SELECT ID, IDUSUARIO, IDALBUN, NOMBRE,GENERO,LETRA,FECHAPUBLICACION,NUMEROMEGUSTA,LINK FROM CANCIONES WHERE ESTADO='A' AND IDUSUARIO=:P_IDUSUARIO";
+                cmd.Parameters.Clear();
+                cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDUSUARIO", Value = idUsuario });
+                await cmd.ExecuteNonQueryAsync();
+
+                var adapter = new OracleDataAdapter(cmd);
+                var data = new DataSet("Datos");
+                adapter.Fill(data);
+
+                await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.CloseAsync();
+
+                if (data.Tables[0].Rows.Count > 0)
+                {
+                    foreach (DataRow item in data.Tables[0].Rows)
+                    {
+                        CancionModel cancionModel = new CancionModel
+                        {
+                            Id = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[0]) ? Convert.ToInt64(item.ItemArray[0]) : 0,
+                            IdUsuario = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[1]) ? Convert.ToInt64(item.ItemArray[1]) : 0,
+                            IdAlbun = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[2]) ? Convert.ToInt64(item.ItemArray[2]) : 0,
+                            Nombre = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[3]) ? Convert.ToString(item.ItemArray[3]) : "SIN NOMBRE",
+                            Genero = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[4]) ? Convert.ToString(item.ItemArray[4]) : "SIN GENERO",
+                            Letra = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[5]) ? Convert.ToString(item.ItemArray[5]).Replace("-", "\n") : "SIN LETRA",
+                            FechaPublicacion = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[6]) ? Convert.ToDateTime(item.ItemArray[6]) : null,
+                            NumeroMegusta = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[7]) ? Convert.ToInt64(item.ItemArray[7]) : 0,
+                            Link = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[8]) ? Convert.ToString(item.ItemArray[8]) : "SIN LINK"
+                        };
+
+                        _outs.Add(cancionModel);
+                    }
+                }
+                else
+                {
+                    return null;
+                }
+
+                return _outs;
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+            }
+            return null;
+        }
+
+
+
+
     }
 }
