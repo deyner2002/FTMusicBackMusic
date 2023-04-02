@@ -13,5 +13,7 @@ namespace CORE.Loyal.Interfaces.Providers
 
 
         Task<List<CancionModel>> ConsultarCancionPorUsuario(int idUsuario);
+
+        Task<List<CancionModel>> ConsultarCancionPorNombre(string nombre);
     }
 }

@@ -108,5 +108,25 @@ namespace Core.Loyal.Services
 
 
 
+
+
+
+        public async Task<List<CancionModel>> ConsultarCancionPorNombre(string nombre)
+        {
+            List<CancionModel> list = new List<CancionModel>();
+            try
+            {
+                list = await _provider.ConsultarCancionPorNombre(nombre);
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+            }
+            return list;
+        }
+
+
+
+
     }
 }

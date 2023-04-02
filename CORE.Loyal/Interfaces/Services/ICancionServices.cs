@@ -11,6 +11,7 @@ namespace CORE.Loyal.Interfaces.Services
         Task<long> ModificarCancion(CancionModel cancion);
 
         Task<List<CancionModel>> ConsultarCancionPorUsuario(int idUsuario);
+        Task<List<CancionModel>> ConsultarCancionPorNombre(string nombre);
 
     }
 }

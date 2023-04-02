@@ -73,7 +73,7 @@ namespace Api.Loyal.Controllers
                     else
                     {
                         response.IsError = false;
-                        response.Mensaje = "Registro Guardado";
+                        response.Mensaje = "La cancion llamada: "+user.Nombre+" ha sido guardada";
                     }
                 }
 
@@ -246,6 +246,38 @@ namespace Api.Loyal.Controllers
         }
 
 
+
+
+        [HttpGet]
+        [Route("ConsultarCancionPorNombre")]
+        public async Task<ResponseModels> ConsultarCancionPorNombre(string nombre)
+        {
+            ResponseModels response = new ResponseModels();
+
+            try
+            {
+                response.Datos = _provider.ConsultarCancionPorNombre(nombre).Result;
+                if (response.Datos != null)
+                {
+                    response.IsError = false;
+                    response.Mensaje = "Ok";
+                }
+                else
+                {
+                    response.IsError = true;
+                    response.Mensaje = "Error en obtener datos";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+                response.IsError = true;
+                response.Mensaje = "Error en obtener datos";
+            }
+
+            return response;
+        }
 
 
 
