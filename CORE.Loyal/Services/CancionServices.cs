@@ -1,6 +1,7 @@
 ﻿using Core.Loyal.Models.FTMUSIC;
 using CORE.Loyal.Interfaces.Providers;
 using CORE.Loyal.Interfaces.Services;
+using CORE.Loyal.Models.FTMUSIC;
 using Support.Loyal.Util;
 
 namespace Core.Loyal.Services
@@ -125,6 +126,43 @@ namespace Core.Loyal.Services
             return list;
         }
 
+
+
+
+
+        public async Task<long> GuardarComentario(ComentarioModel comentario)
+        {
+            long consecutivo = 0;
+            try
+            {
+                consecutivo = await _provider.GuardarComentario(comentario);
+
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+                return -1;
+            }
+            return consecutivo;
+        }
+
+
+
+
+
+        public async Task<List<ComentarioModel>> ConsultarComentarioPorCancion(int idCancion)
+        {
+            List<ComentarioModel> list = new List<ComentarioModel>();
+            try
+            {
+                list = await _provider.ConsultarComentarioPorCancion(idCancion);
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+            }
+            return list;
+        }
 
 
 

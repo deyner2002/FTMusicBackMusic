@@ -9,7 +9,6 @@
         public string? Genero { get; set; }
         public string? Letra { get; set; }
         public DateTime? FechaPublicacion { get; set; }
-        public long? NumeroMegusta { get; set; }
         public string? Link { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Core.Loyal.Models.FTMUSIC;
+using CORE.Loyal.Models.FTMUSIC;
 
 namespace CORE.Loyal.Interfaces.Providers
 {
@@ -15,5 +16,7 @@ namespace CORE.Loyal.Interfaces.Providers
         Task<List<CancionModel>> ConsultarCancionPorUsuario(int idUsuario);
 
         Task<List<CancionModel>> ConsultarCancionPorNombre(string nombre);
+        Task<long> GuardarComentario(ComentarioModel comentario);
+        Task<List<ComentarioModel>> ConsultarComentarioPorCancion(int idCancion);
     }
 }

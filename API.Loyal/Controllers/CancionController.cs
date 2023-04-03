@@ -1,5 +1,6 @@
 ﻿using Core.Loyal.Models.FTMUSIC;
 using CORE.Loyal.Interfaces.Services;
+using CORE.Loyal.Models.FTMUSIC;
 using Microsoft.AspNetCore.Mvc;
 using Support.Loyal.DTOs;
 using Support.Loyal.Util;
@@ -241,7 +242,6 @@ namespace Api.Loyal.Controllers
                 response.IsError = true;
                 response.Mensaje = "Error en obtener datos";
             }
-
             return response;
         }
 
@@ -278,6 +278,94 @@ namespace Api.Loyal.Controllers
 
             return response;
         }
+
+
+
+
+
+
+
+
+        [HttpPost]
+        [Route("GuardarComentario")]
+        public async Task<ResponseModels> GuardarComentario(ComentarioModel comentario)
+        {
+            ResponseModels response = new ResponseModels();
+
+            try
+            {
+                response.Datos = _provider.GuardarComentario(comentario).Result;
+                long codigoRespuesta = long.Parse(response.Datos.ToString());
+                if (codigoRespuesta == -2)
+                {
+                    response.IsError = true;
+                    response.Mensaje = "Error: hay campos nulos que son obligatorios";
+                }
+                if (codigoRespuesta == -1)
+                {
+                    response.IsError = true;
+                    response.Mensaje = "Error del sistema";
+                }
+
+                if (codigoRespuesta == -3)
+                {
+                    response.IsError = true;
+                    response.Mensaje = "La cancion a la que se quiere registrar el comentario, no existe";
+                }
+
+                if (codigoRespuesta > 0)
+                {
+                    response.IsError = false;
+                    response.Mensaje = "El comentario " + codigoRespuesta + " Ha sido guardado";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+                response.IsError = true;
+                response.Mensaje = "Error del sistema";
+            }
+
+            return response;
+        }
+
+
+
+
+
+
+
+        [HttpGet]
+        [Route("ConsultarComentarioPorCancion")]
+        public async Task<ResponseModels> ConsultarComentarioPorCancion(int idCancion)
+        {
+            ResponseModels response = new ResponseModels();
+
+            try
+            {
+                response.Datos = _provider.ConsultarComentarioPorCancion(idCancion).Result;
+                if (response.Datos != null)
+                {
+                    response.IsError = false;
+                    response.Mensaje = "Ok";
+                }
+                else
+                {
+                    response.IsError = true;
+                    response.Mensaje = "No se encontraron comentarios de esta cancion";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+                response.IsError = true;
+                response.Mensaje = "Error en obtener datos";
+            }
+            return response;
+        }
+
 
 
 
