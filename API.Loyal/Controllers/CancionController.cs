@@ -369,5 +369,108 @@ namespace Api.Loyal.Controllers
 
 
 
+
+        [HttpPost]
+        [Route("GuardarLike")]
+        public async Task<ResponseModels> GuardarLike(LikeModel like)
+        {
+            ResponseModels response = new ResponseModels();
+
+            try
+            {
+                response.Datos = _provider.GuardarLike(like).Result;
+                long codigoRespuesta = long.Parse(response.Datos.ToString());
+                if (codigoRespuesta == -1)
+                {
+                    response.IsError = true;
+                    response.Mensaje = "Error del sistema";
+                }
+
+                if (codigoRespuesta == -2)
+                {
+                    response.IsError = true;
+                    response.Mensaje = "Error: hay campos nulos que son obligatorios";
+                }
+
+                if (codigoRespuesta == -3)
+                {
+                    response.IsError = true;
+                    response.Mensaje = "La cancion a la que se quiere registrar el like, no existe";
+                }
+
+                if (codigoRespuesta == -4)
+                {
+                    response.IsError = false;
+                    response.Mensaje = "Like eliminado de la cancion";
+                }
+
+                if (codigoRespuesta > 0)
+                {
+                    response.IsError = false;
+                    response.Mensaje = "El like " + codigoRespuesta + " Ha sido guardado";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+                response.IsError = true;
+                response.Mensaje = "Error del sistema";
+            }
+
+            return response;
+        }
+
+        [HttpPost]
+        [Route("GuardarDisLike")]
+        public async Task<ResponseModels> GuardarDisLike(DisLikeModel disLike)
+        {
+            ResponseModels response = new ResponseModels();
+
+            try
+            {
+                response.Datos = _provider.GuardarDisLike(disLike).Result;
+                long codigoRespuesta = long.Parse(response.Datos.ToString());
+                if (codigoRespuesta == -1)
+                {
+                    response.IsError = true;
+                    response.Mensaje = "Error del sistema";
+                }
+
+                if (codigoRespuesta == -2)
+                {
+                    response.IsError = true;
+                    response.Mensaje = "Error: hay campos nulos que son obligatorios";
+                }
+
+                if (codigoRespuesta == -3)
+                {
+                    response.IsError = true;
+                    response.Mensaje = "La cancion a la que se quiere registrar el dislike, no existe";
+                }
+
+                if (codigoRespuesta == -4)
+                {
+                    response.IsError = false;
+                    response.Mensaje = "DisLike eliminado de la cancion";
+                }
+
+                if (codigoRespuesta > 0)
+                {
+                    response.IsError = false;
+                    response.Mensaje = "El DisLike " + codigoRespuesta + " Ha sido guardado";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+                response.IsError = true;
+                response.Mensaje = "Error del sistema";
+            }
+
+            return response;
+        }
+
     }
 }

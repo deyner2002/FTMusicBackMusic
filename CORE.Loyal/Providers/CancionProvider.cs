@@ -568,5 +568,223 @@ namespace Core.Loyal.Providers
 
 
 
+
+
+        public async Task<long> GuardarLike(LikeModel like)
+        {
+            long resultado = 0;
+            try
+            {
+                if (like.Id != null && like.IdUsuario != null && like.IdCancion != null)
+                {
+                    
+                    await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.OpenAsync();
+
+                    cmd.CommandText = "SELECT ID, IDUSUARIO, IDALBUN, NOMBRE,GENERO,LETRA,FECHAPUBLICACION,LINK FROM CANCIONES WHERE ID=:P_ID AND ESTADO='A'";
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Varchar2, Direction = ParameterDirection.Input, ParameterName = "P_ID", Value = like.IdCancion });
+                    await cmd.ExecuteNonQueryAsync();
+
+                    var adapter = new OracleDataAdapter(cmd);
+                    var data = new DataSet("Datos");
+                    adapter.Fill(data);
+
+
+                    if (data.Tables[0].Rows.Count > 0)
+                    {
+                        cmd.CommandText = "SELECT ID FROM LIKES WHERE IDUSUARIO=:P_IDUSUARIO AND IDCANCION=:P_IDCANCION";
+                        cmd.Parameters.Clear();
+                        cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Varchar2, Direction = ParameterDirection.Input, ParameterName = "P_IDUSUARIO", Value = like.IdUsuario });
+                        cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Varchar2, Direction = ParameterDirection.Input, ParameterName = "P_IDCANCION", Value = like.IdCancion });
+                        await cmd.ExecuteNonQueryAsync();
+
+                        adapter = new OracleDataAdapter(cmd);
+                        data = new DataSet("Datos");
+                        adapter.Fill(data);
+
+                        if (data.Tables[0].Rows.Count == 0 )
+                        {
+                            cmd.CommandText = @"
+                                        INSERT INTO LIKES
+                                        (ID, IDUSUARIO, IDCANCION)
+                                        VALUES(SEQUENCELIKES.NEXTVAL,:P_IDUSUARIO,:P_IDCANCION)
+                                        ";
+                            cmd.Parameters.Clear();
+                            cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDUSUARIO", Value = like.IdUsuario });
+                            cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDCANCION", Value = like.IdCancion });
+                            await cmd.ExecuteNonQueryAsync();
+
+                            cmd.CommandText = @"
+                                        DELETE FROM DISLIKES WHERE IDUSUARIO=:P_IDUSUARIO AND IDCANCION=:P_IDCANCION
+                                        ";
+                            cmd.Parameters.Clear();
+                            cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDUSUARIO", Value = like.IdUsuario });
+                            cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDCANCION", Value = like.IdCancion });
+                            await cmd.ExecuteNonQueryAsync();
+
+                            cmd.CommandText = @"
+                                        select SEQUENCELIKES.currval from dual
+                                        ";
+                            await cmd.ExecuteNonQueryAsync();
+
+                            adapter = new OracleDataAdapter(cmd);
+                            data = new DataSet("Datos");
+                            adapter.Fill(data);
+
+                            await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.CloseAsync();
+
+                            if (data.Tables[0].Rows.Count > 0)
+                            {
+                                foreach (DataRow item in data.Tables[0].Rows)
+                                {
+                                    resultado = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[0]) ? Convert.ToInt64(item.ItemArray[0]) : 0;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            cmd.CommandText = @"
+                                        DELETE FROM LIKES WHERE IDUSUARIO=:P_IDUSUARIO AND IDCANCION=:P_IDCANCION
+                                        ";
+                            cmd.Parameters.Clear();
+                            cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDUSUARIO", Value = like.IdUsuario });
+                            cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDCANCION", Value = like.IdCancion });
+                            await cmd.ExecuteNonQueryAsync();
+                            resultado = -4;
+                        }
+
+                    }
+                    else
+                    {
+                        resultado = -3;
+                    }
+                }
+                else
+                {
+                    resultado = -2;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.CloseAsync();
+                Plugins.WriteExceptionLog(ex);
+                return -1;
+            }
+            await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.CloseAsync();
+            return resultado;
+        }
+
+
+
+
+        public async Task<long> GuardarDisLike(DisLikeModel disLike)
+        {
+            long resultado = 0;
+            try
+            {
+                if (disLike.Id != null && disLike.IdUsuario != null && disLike.IdCancion != null)
+                {
+
+                    await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.OpenAsync();
+
+                    cmd.CommandText = "SELECT ID, IDUSUARIO, IDALBUN, NOMBRE,GENERO,LETRA,FECHAPUBLICACION,LINK FROM CANCIONES WHERE ID=:P_ID AND ESTADO='A'";
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Varchar2, Direction = ParameterDirection.Input, ParameterName = "P_ID", Value = disLike.IdCancion });
+                    await cmd.ExecuteNonQueryAsync();
+
+                    var adapter = new OracleDataAdapter(cmd);
+                    var data = new DataSet("Datos");
+                    adapter.Fill(data);
+
+
+                    if (data.Tables[0].Rows.Count > 0)
+                    {
+                        cmd.CommandText = "SELECT ID FROM DISLIKES WHERE IDUSUARIO=:P_IDUSUARIO AND IDCANCION=:P_IDCANCION";
+                        cmd.Parameters.Clear();
+                        cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Varchar2, Direction = ParameterDirection.Input, ParameterName = "P_IDUSUARIO", Value = disLike.IdUsuario });
+                        cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Varchar2, Direction = ParameterDirection.Input, ParameterName = "P_IDCANCION", Value = disLike.IdCancion });
+                        await cmd.ExecuteNonQueryAsync();
+
+                        adapter = new OracleDataAdapter(cmd);
+                        data = new DataSet("Datos");
+                        adapter.Fill(data);
+
+                        if (data.Tables[0].Rows.Count == 0)
+                        {
+                            cmd.CommandText = @"
+                                        INSERT INTO DISLIKES
+                                        (ID, IDUSUARIO, IDCANCION)
+                                        VALUES(SEQUENCEDISLIKES.NEXTVAL,:P_IDUSUARIO,:P_IDCANCION)
+                                        ";
+                            cmd.Parameters.Clear();
+                            cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDUSUARIO", Value = disLike.IdUsuario });
+                            cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDCANCION", Value = disLike.IdCancion });
+                            await cmd.ExecuteNonQueryAsync();
+
+                            cmd.CommandText = @"
+                                        DELETE FROM LIKES WHERE IDUSUARIO=:P_IDUSUARIO AND IDCANCION=:P_IDCANCION
+                                        ";
+                            cmd.Parameters.Clear();
+                            cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDUSUARIO", Value = disLike.IdUsuario });
+                            cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDCANCION", Value = disLike.IdCancion });
+                            await cmd.ExecuteNonQueryAsync();
+
+                            cmd.CommandText = @"
+                                        select SEQUENCEDISLIKES.currval from dual
+                                        ";
+                            await cmd.ExecuteNonQueryAsync();
+
+                            adapter = new OracleDataAdapter(cmd);
+                            data = new DataSet("Datos");
+                            adapter.Fill(data);
+
+                            await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.CloseAsync();
+
+                            if (data.Tables[0].Rows.Count > 0)
+                            {
+                                foreach (DataRow item in data.Tables[0].Rows)
+                                {
+                                    resultado = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[0]) ? Convert.ToInt64(item.ItemArray[0]) : 0;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            cmd.CommandText = @"
+                                        DELETE FROM DISLIKES WHERE IDUSUARIO=:P_IDUSUARIO AND IDCANCION=:P_IDCANCION
+                                        ";
+                            cmd.Parameters.Clear();
+                            cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDUSUARIO", Value = disLike.IdUsuario });
+                            cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDCANCION", Value = disLike.IdCancion });
+                            await cmd.ExecuteNonQueryAsync();
+                            resultado = -4;
+                        }
+
+                    }
+                    else
+                    {
+                        resultado = -3;
+                    }
+                }
+                else
+                {
+                    resultado = -2;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.CloseAsync();
+                Plugins.WriteExceptionLog(ex);
+                return -1;
+            }
+            await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.CloseAsync();
+            return resultado;
+        }
+
+
+
+
     }
 }

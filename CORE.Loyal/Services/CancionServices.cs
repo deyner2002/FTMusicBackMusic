@@ -166,5 +166,37 @@ namespace Core.Loyal.Services
 
 
 
+        public async Task<long> GuardarLike(LikeModel like)
+        {
+            long resultado = 0;
+            try
+            {
+                resultado = await _provider.GuardarLike(like);
+
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+                return -1;
+            }
+            return resultado;
+        }
+
+        public async Task<long> GuardarDisLike(DisLikeModel disLike)
+        {
+            long resultado = 0;
+            try
+            {
+                resultado = await _provider.GuardarDisLike(disLike);
+
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+                return -1;
+            }
+            return resultado;
+        }
+
     }
 }
