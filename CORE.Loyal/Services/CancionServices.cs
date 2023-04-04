@@ -198,5 +198,38 @@ namespace Core.Loyal.Services
             return resultado;
         }
 
+
+        public async Task<long> ConsultarNumeroMegustaPorCancion(int idCancion)
+        {
+            long resultado = 0;
+            try
+            {
+                resultado = await _provider.ConsultarNumeroMegustaPorCancion(idCancion);
+
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+                return -1;
+            }
+            return resultado;
+        }
+
+        public async Task<long> ConsultarNumeroNoMegustaPorCancion(int idCancion)
+        {
+            long resultado = 0;
+            try
+            {
+                resultado = await _provider.ConsultarNumeroNoMegustaPorCancion(idCancion);
+
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+                return -1;
+            }
+            return resultado;
+        }
+
     }
 }

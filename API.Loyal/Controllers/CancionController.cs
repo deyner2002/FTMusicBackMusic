@@ -472,5 +472,86 @@ namespace Api.Loyal.Controllers
             return response;
         }
 
+
+
+
+        [HttpPost]
+        [Route("ConsultarNumeroMegustaPorCancion")]
+        public async Task<ResponseModels> ConsultarNumeroMegustaPorCancion(int idCancion)
+        {
+            ResponseModels response = new ResponseModels();
+
+            try
+            {
+                response.Datos = _provider.ConsultarNumeroMegustaPorCancion(idCancion).Result;
+                long codigoRespuesta = long.Parse(response.Datos.ToString());
+                if (codigoRespuesta == -2)
+                {
+                    response.IsError = true;
+                    response.Mensaje = "Error del sistema";
+                }
+
+                if (codigoRespuesta == -1)
+                {
+                    response.IsError = true;
+                    response.Mensaje = "La cancion en cuestion no tiene likes asignados";
+                }
+
+                if (codigoRespuesta > 0)
+                {
+                    response.IsError = false;
+                    response.Mensaje = "El numero de Likes es de: "+codigoRespuesta;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+                response.IsError = true;
+                response.Mensaje = "Error del sistema";
+            }
+
+            return response;
+        }
+
+        [HttpPost]
+        [Route("ConsultarNumeroMegustaPorCancion")]
+        public async Task<ResponseModels> ConsultarNumeroNoMegustaPorCancion(int idCancion)
+        {
+            ResponseModels response = new ResponseModels();
+
+            try
+            {
+                response.Datos = _provider.ConsultarNumeroNoMegustaPorCancion(idCancion).Result;
+                long codigoRespuesta = long.Parse(response.Datos.ToString());
+                if (codigoRespuesta == -2)
+                {
+                    response.IsError = true;
+                    response.Mensaje = "Error del sistema";
+                }
+
+                if (codigoRespuesta == -1)
+                {
+                    response.IsError = true;
+                    response.Mensaje = "La cancion en cuestion no tiene Dislikes asignados";
+                }
+
+                if (codigoRespuesta > 0)
+                {
+                    response.IsError = false;
+                    response.Mensaje = "El numero de DisLikes es de: " + codigoRespuesta;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+                response.IsError = true;
+                response.Mensaje = "Error del sistema";
+            }
+
+            return response;
+        }
+
     }
 }

@@ -17,5 +17,7 @@ namespace CORE.Loyal.Interfaces.Services
         Task<List<ComentarioModel>> ConsultarComentarioPorCancion(int idCancion);
         Task<long> GuardarLike(LikeModel like);
         Task<long> GuardarDisLike(DisLikeModel disLike);
+        Task<long> ConsultarNumeroMegustaPorCancion(int idCancion);
+        Task<long> ConsultarNumeroNoMegustaPorCancion(int idCancion);
     }
 }

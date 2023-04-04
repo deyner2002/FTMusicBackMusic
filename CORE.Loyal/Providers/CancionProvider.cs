@@ -785,6 +785,87 @@ namespace Core.Loyal.Providers
 
 
 
+        public async Task<long> ConsultarNumeroMegustaPorCancion(int idCancion)
+        {
+            long resultado = 0;
+            try
+            {
+                await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.OpenAsync();
+
+                cmd.CommandText = "SELECT COUNT(*) FROM LIKES WHERE IDCANCION=:P_IDCANCION";
+                cmd.Parameters.Clear();
+                cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDCANCION", Value = idCancion });
+                await cmd.ExecuteNonQueryAsync();
+
+                var adapter = new OracleDataAdapter(cmd);
+                var data = new DataSet("Datos");
+                adapter.Fill(data);
+
+                await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.CloseAsync();
+
+                if (data.Tables[0].Rows.Count > 0)
+                {
+                    foreach (DataRow item in data.Tables[0].Rows)
+                    {
+                        resultado = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[0]) ? Convert.ToInt64(item.ItemArray[0]) : 0;
+                    }
+                }
+                else
+                {
+                    resultado= -1;
+                }
+            }
+            catch (Exception ex)
+            {
+                await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.CloseAsync();
+                resultado = -2;
+                Plugins.WriteExceptionLog(ex);
+            }
+            await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.CloseAsync();
+            return resultado;
+        }
+
+
+        public async Task<long> ConsultarNumeroNoMegustaPorCancion(int idCancion)
+        {
+            long resultado = 0;
+            try
+            {
+                await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.OpenAsync();
+
+                cmd.CommandText = "SELECT COUNT(*) FROM DISLIKES WHERE IDCANCION=:P_IDCANCION";
+                cmd.Parameters.Clear();
+                cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDCANCION", Value = idCancion });
+                await cmd.ExecuteNonQueryAsync();
+
+                var adapter = new OracleDataAdapter(cmd);
+                var data = new DataSet("Datos");
+                adapter.Fill(data);
+
+                await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.CloseAsync();
+
+                if (data.Tables[0].Rows.Count > 0)
+                {
+                    foreach (DataRow item in data.Tables[0].Rows)
+                    {
+                        resultado = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[0]) ? Convert.ToInt64(item.ItemArray[0]) : 0;
+                    }
+                }
+                else
+                {
+                    resultado = -1;
+                }
+            }
+            catch (Exception ex)
+            {
+                await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.CloseAsync();
+                resultado = -2;
+                Plugins.WriteExceptionLog(ex);
+            }
+            await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.CloseAsync();
+            return resultado;
+        }
+
 
     }
 }
