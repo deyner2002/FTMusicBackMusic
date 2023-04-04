@@ -515,7 +515,7 @@ namespace Api.Loyal.Controllers
         }
 
         [HttpPost]
-        [Route("ConsultarNumeroMegustaPorCancion")]
+        [Route("ConsultarNumeroNoMegustaPorCancion")]
         public async Task<ResponseModels> ConsultarNumeroNoMegustaPorCancion(int idCancion)
         {
             ResponseModels response = new ResponseModels();
