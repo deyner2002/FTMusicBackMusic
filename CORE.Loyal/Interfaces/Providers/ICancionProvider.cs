@@ -1,4 +1,5 @@
 ﻿using Core.Loyal.Models.FTMUSIC;
+using CORE.Loyal.Models.DTOs;
 using CORE.Loyal.Models.FTMUSIC;
 
 namespace CORE.Loyal.Interfaces.Providers
@@ -22,5 +23,6 @@ namespace CORE.Loyal.Interfaces.Providers
         Task<long> GuardarDisLike(DisLikeModel disLike);
         Task<long> ConsultarNumeroMegustaPorCancion(int idCancion);
         Task<long> ConsultarNumeroNoMegustaPorCancion(int idCancion);
+        Task<CancionCompletaDTO> ConsultarCancionCompleta(int idCancion);
     }
 }

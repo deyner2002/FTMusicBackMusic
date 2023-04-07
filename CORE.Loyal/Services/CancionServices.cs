@@ -1,6 +1,7 @@
 ﻿using Core.Loyal.Models.FTMUSIC;
 using CORE.Loyal.Interfaces.Providers;
 using CORE.Loyal.Interfaces.Services;
+using CORE.Loyal.Models.DTOs;
 using CORE.Loyal.Models.FTMUSIC;
 using Support.Loyal.Util;
 
@@ -230,6 +231,21 @@ namespace Core.Loyal.Services
             }
             return resultado;
         }
+
+        public async Task<CancionCompletaDTO> ConsultarCancionCompleta(int idCancion)
+        {
+            CancionCompletaDTO cancionCompletaDTO = new CancionCompletaDTO();
+            try
+            {
+                cancionCompletaDTO = await _provider.ConsultarCancionCompleta(idCancion);
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+            }
+            return cancionCompletaDTO;
+        }
+
 
     }
 }

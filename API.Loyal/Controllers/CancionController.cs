@@ -1,5 +1,6 @@
 ﻿using Core.Loyal.Models.FTMUSIC;
 using CORE.Loyal.Interfaces.Services;
+using CORE.Loyal.Models.DTOs;
 using CORE.Loyal.Models.FTMUSIC;
 using Microsoft.AspNetCore.Mvc;
 using Support.Loyal.DTOs;
@@ -553,5 +554,35 @@ namespace Api.Loyal.Controllers
             return response;
         }
 
+
+
+        [HttpPost]
+        [Route("ConsultarCancionCompleta")]
+        public async Task<ResponseModels> ConsultarCancionCompleta(int idCancion)
+        {
+            ResponseModels response = new ResponseModels();
+            try
+            {
+                response.Datos = _provider.ConsultarCancionCompleta(idCancion).Result;
+                if (response.Datos!=null)
+                {
+                    response.IsError = false;
+                    response.Mensaje = "la cancion se ha consultado correctamente";
+                }
+                else
+                {
+                    response.IsError = true;
+                    response.Mensaje = "no se han encontrado registros pertenecientes a la cancion identificada como: "+idCancion;
+                }
+                
+            }
+            catch(Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+                response.IsError = true;
+                response.Mensaje = "Error del sistema";
+            }
+            return response;
+        }
     }
 }

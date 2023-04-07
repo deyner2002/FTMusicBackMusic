@@ -7,6 +7,7 @@ using System.Data;
 using CORE.Loyal.Interfaces.Providers;
 using Core.Loyal.Models.FTMUSIC;
 using CORE.Loyal.Models.FTMUSIC;
+using CORE.Loyal.Models.DTOs;
 
 namespace Core.Loyal.Providers
 {
@@ -866,6 +867,35 @@ namespace Core.Loyal.Providers
             return resultado;
         }
 
+
+
+
+
+        public async Task<CancionCompletaDTO> ConsultarCancionCompleta(int idCancion)
+        {
+            try
+            {
+                CancionCompletaDTO cancionCompletaDTO=new CancionCompletaDTO();
+                CancionModel cancion = ConsultarCancion(idCancion).Result;
+                List<ComentarioModel> comentarios = ConsultarComentarioPorCancion(idCancion).Result;
+                long numeroLikes = ConsultarNumeroMegustaPorCancion(idCancion).Result;
+                long numeroDisLikes = ConsultarNumeroNoMegustaPorCancion(idCancion).Result;
+                if (numeroLikes< 0) { numeroLikes=0; }
+                if (numeroDisLikes< 0) { numeroDisLikes=0; }
+                cancionCompletaDTO.NumeroDisLikes=numeroDisLikes;
+                cancionCompletaDTO.NumeroLikes=numeroLikes;
+                cancionCompletaDTO.MapearCancion(cancion);
+                cancionCompletaDTO.Comentarios=comentarios;
+                return cancionCompletaDTO;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+
+                
 
     }
 }

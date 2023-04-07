@@ -1,4 +1,5 @@
 ﻿using Core.Loyal.Models.FTMUSIC;
+using CORE.Loyal.Models.DTOs;
 using CORE.Loyal.Models.FTMUSIC;
 
 namespace CORE.Loyal.Interfaces.Services
@@ -10,7 +11,6 @@ namespace CORE.Loyal.Interfaces.Services
         Task<CancionModel> ConsultarCancion(int id);
         Task<long> DesactivarCancion(int id);
         Task<long> ModificarCancion(CancionModel cancion);
-
         Task<List<CancionModel>> ConsultarCancionPorUsuario(int idUsuario);
         Task<List<CancionModel>> ConsultarCancionPorNombre(string nombre);
         Task<long> GuardarComentario(ComentarioModel comentario);
@@ -19,5 +19,7 @@ namespace CORE.Loyal.Interfaces.Services
         Task<long> GuardarDisLike(DisLikeModel disLike);
         Task<long> ConsultarNumeroMegustaPorCancion(int idCancion);
         Task<long> ConsultarNumeroNoMegustaPorCancion(int idCancion);
+        Task<CancionCompletaDTO> ConsultarCancionCompleta(int idCancion);
+
     }
 }
