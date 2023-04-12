@@ -463,8 +463,8 @@ namespace Core.Loyal.Providers
                     {
                         cmd.CommandText = @"
                                         INSERT INTO COMENTARIOS
-                                        (ID, IDUSUARIO, IDCANCION,MENSAJE)
-                                        VALUES(SEQUENCECOMENTARIOS.NEXTVAL,:P_IDUSUARIO,:P_IDCANCION,:P_MENSAJE)
+                                        (ID, IDUSUARIO, IDCANCION,MENSAJE,FECHA)
+                                        VALUES(SEQUENCECOMENTARIOS.NEXTVAL,:P_IDUSUARIO,:P_IDCANCION,:P_MENSAJE,CURRENT_DATE)
                                         ";
                     cmd.Parameters.Clear();
                     cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDUSUARIO", Value = comentario.IdUsuario });
@@ -523,7 +523,7 @@ namespace Core.Loyal.Providers
             {
                 await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.OpenAsync();
 
-                cmd.CommandText = "SELECT ID, IDUSUARIO, IDCANCION, MENSAJE FROM COMENTARIOS WHERE IDCANCION=:P_IDCANCION";
+                cmd.CommandText = "SELECT ID, IDUSUARIO, IDCANCION, MENSAJE,FECHA FROM COMENTARIOS WHERE IDCANCION=:P_IDCANCION";
                 cmd.Parameters.Clear();
                 cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDCANCION", Value = idCancion});
                 await cmd.ExecuteNonQueryAsync();
@@ -543,7 +543,8 @@ namespace Core.Loyal.Providers
                             Id = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[0]) ? Convert.ToInt64(item.ItemArray[0]) : 0,
                             IdUsuario = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[1]) ? Convert.ToInt64(item.ItemArray[1]) : 0,
                             IdCancion = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[2]) ? Convert.ToInt64(item.ItemArray[2]) : 0,
-                            Mensaje = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[3]) ? Convert.ToString(item.ItemArray[3]) : "SIN COMENTARIO"
+                            Mensaje = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[3]) ? Convert.ToString(item.ItemArray[3]) : "SIN COMENTARIO",
+                            Fecha = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[4]) ? Convert.ToDateTime(item.ItemArray[4]) : null
                         };
 
                         _outs.Add(comentarioModel);

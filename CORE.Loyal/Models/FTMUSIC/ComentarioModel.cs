@@ -12,5 +12,6 @@ namespace CORE.Loyal.Models.FTMUSIC
         public long? IdUsuario { get; set; }
         public long? IdCancion { get; set; }
         public string? Mensaje { get; set; }
+        public DateTime? Fecha { get; set; }
     }
 }
