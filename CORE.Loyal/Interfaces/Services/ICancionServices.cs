@@ -6,20 +6,31 @@ namespace CORE.Loyal.Interfaces.Services
 {
     public interface ICancionServices
     {
-        Task<List<CancionModel>> GetList();
+        Task<List<CancionModel>> GetListCanciones();
         Task<long> SaveCancion(CancionModel user);
+        Task<long> SaveInterpretacion(InterpretacionModel user);
         Task<CancionModel> ConsultarCancion(int id);
+        Task<InterpretacionModel> ConsultarInterpretacion(int id);
         Task<long> DesactivarCancion(int id);
+        Task<long> DesactivarInterpretacion(int id);
         Task<long> ModificarCancion(CancionModel cancion);
+        Task<long> ModificarInterpretacion(InterpretacionModel interpretacion);
         Task<List<CancionModel>> ConsultarCancionPorUsuario(int idUsuario);
+        Task<List<InterpretacionModel>> ConsultarInterpretacionPorUsuario(int idUsuario);
         Task<List<CancionModel>> ConsultarCancionPorNombre(string nombre);
-        Task<long> GuardarComentario(ComentarioModel comentario);
+        Task<List<InterpretacionModel>> ConsultarInterpretacionPorNombre(string nombre);
+        Task<long> GuardarComentarioCancion(ComentarioModel comentario);
+        Task<long> GuardarComentarioInterpretacion(ComentarioModel comentario);
         Task<List<ComentarioModel>> ConsultarComentarioPorCancion(int idCancion);
-        Task<long> GuardarLike(LikeModel like);
-        Task<long> GuardarDisLike(DisLikeModel disLike);
+        Task<long> GuardarLikeCancion(LikeModel like);
+        Task<long> GuardarDisLikeCancion(DisLikeModel disLike);
+        Task<long> GuardarLikeInterpretacion(LikeModel like);
+        Task<long> GuardarDisLikeInterpretacion(DisLikeModel disLike);
         Task<long> ConsultarNumeroMegustaPorCancion(int idCancion);
         Task<long> ConsultarNumeroNoMegustaPorCancion(int idCancion);
         Task<CancionCompletaDTO> ConsultarCancionCompleta(int idCancion);
+        Task<InterpretacionCompletaDTO> ConsultarInterpretacionCompleta(int id);
+        Task<List<InterpretacionModel>> GetListInterpretaciones();
 
     }
 }

@@ -17,6 +17,7 @@ namespace CORE.Loyal.Models.DTOs
 
         public void MapearCancion(CancionModel cancion)
         {
+            if (cancion != null) { 
             Id = cancion.Id;
             IdUsuario = cancion.IdUsuario;
             IdAlbun= cancion.IdAlbun;
@@ -25,6 +26,7 @@ namespace CORE.Loyal.Models.DTOs
             Letra = cancion.Letra;
             FechaPublicacion = cancion.FechaPublicacion;
             Link = cancion.Link;
+                }
         }
     }
 }

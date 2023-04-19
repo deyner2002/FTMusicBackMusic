@@ -14,12 +14,12 @@ namespace Core.Loyal.Services
         {
             _provider = provider;
         }
-        public async Task<List<CancionModel>> GetList()
+        public async Task<List<CancionModel>> GetListCanciones()
         {
             List<CancionModel> list = new List<CancionModel>(); 
             try
             {
-               list = await _provider.GetList();
+               list = await _provider.GetListCanciones();
             }
             catch (Exception ex)
             {
@@ -131,12 +131,12 @@ namespace Core.Loyal.Services
 
 
 
-        public async Task<long> GuardarComentario(ComentarioModel comentario)
+        public async Task<long> GuardarComentarioCancion(ComentarioModel comentario)
         {
             long consecutivo = 0;
             try
             {
-                consecutivo = await _provider.GuardarComentario(comentario);
+                consecutivo = await _provider.GuardarComentarioCancion(comentario);
 
             }
             catch (Exception ex)
@@ -167,12 +167,12 @@ namespace Core.Loyal.Services
 
 
 
-        public async Task<long> GuardarLike(LikeModel like)
+        public async Task<long> GuardarLikeCancion(LikeModel like)
         {
             long resultado = 0;
             try
             {
-                resultado = await _provider.GuardarLike(like);
+                resultado = await _provider.GuardarLikeCancion(like);
 
             }
             catch (Exception ex)
@@ -183,12 +183,12 @@ namespace Core.Loyal.Services
             return resultado;
         }
 
-        public async Task<long> GuardarDisLike(DisLikeModel disLike)
+        public async Task<long> GuardarDisLikeCancion(DisLikeModel disLike)
         {
             long resultado = 0;
             try
             {
-                resultado = await _provider.GuardarDisLike(disLike);
+                resultado = await _provider.GuardarDisLikeCancion(disLike);
 
             }
             catch (Exception ex)
@@ -246,6 +246,184 @@ namespace Core.Loyal.Services
             return cancionCompletaDTO;
         }
 
+
+
+        public async Task<List<InterpretacionModel>> GetListInterpretaciones()
+        {
+            List<InterpretacionModel> list = new List<InterpretacionModel>();
+            try
+            {
+                list = await _provider.GetListInterpretaciones();
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+            }
+            return list;
+        }
+
+        public async Task<List<InterpretacionModel>> ConsultarInterpretacionPorNombre(string nombre)
+        {
+            List<InterpretacionModel> list = new List<InterpretacionModel>();
+            try
+            {
+                list = await _provider.ConsultarInterpretacionPorNombre(nombre);
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+            }
+            return list;
+        }
+
+
+
+        public async Task<long> SaveInterpretacion(InterpretacionModel interpretacion)
+        {
+            long consecutivo = 0;
+            try
+            {
+                consecutivo = await _provider.SaveInterpretacion(interpretacion);
+
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+                return -1;
+            }
+            return consecutivo;
+        }
+
+
+
+
+        public async Task<List<InterpretacionModel>> ConsultarInterpretacionPorUsuario(int idUsuario)
+        {
+            List<InterpretacionModel> list = new List<InterpretacionModel>();
+            try
+            {
+                list = await _provider.ConsultarInterpretacionPorUsuario(idUsuario);
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+            }
+            return list;
+        }
+
+
+
+
+        public async Task<long> GuardarLikeInterpretacion(LikeModel like)
+        {
+            long resultado = 0;
+            try
+            {
+                resultado = await _provider.GuardarLikeInterpretacion(like);
+
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+                return -1;
+            }
+            return resultado;
+        }
+
+        public async Task<long> GuardarDisLikeInterpretacion(DisLikeModel disLike)
+        {
+            long resultado = 0;
+            try
+            {
+                resultado = await _provider.GuardarDisLikeInterpretacion(disLike);
+
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+                return -1;
+            }
+            return resultado;
+        }
+
+        public async Task<long> GuardarComentarioInterpretacion(ComentarioModel comentario)
+        {
+            long consecutivo = 0;
+            try
+            {
+                consecutivo = await _provider.GuardarComentarioInterpretacion(comentario);
+
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+                return -1;
+            }
+            return consecutivo;
+        }
+
+
+
+        public async Task<InterpretacionCompletaDTO> ConsultarInterpretacionCompleta(int id)
+        {
+            InterpretacionCompletaDTO interpretacionCompletaDTO = new InterpretacionCompletaDTO();
+            try
+            {
+                interpretacionCompletaDTO = await _provider.ConsultarInterpretacionCompleta(id);
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+            }
+            return interpretacionCompletaDTO;
+        }
+
+
+
+
+
+        public async Task<InterpretacionModel> ConsultarInterpretacion(int id)
+        {
+            InterpretacionModel cancion = new InterpretacionModel();
+            try
+            {
+                cancion = await _provider.ConsultarInterpretacion(id);
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+            }
+            return cancion;
+        }
+
+        public async Task<long> DesactivarInterpretacion(int id)
+        {
+            long salida = -1;
+            try
+            {
+                salida = await _provider.DesactivarInterpretacion(id);
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+            }
+            return salida;
+        }
+
+
+        public async Task<long> ModificarInterpretacion(InterpretacionModel interpretacion)
+        {
+            long salida = -1;
+            try
+            {
+                salida = await _provider.ModificarInterpretacion(interpretacion);
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+            }
+            return salida;
+        }
 
     }
 }
