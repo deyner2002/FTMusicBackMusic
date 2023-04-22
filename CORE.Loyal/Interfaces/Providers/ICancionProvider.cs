@@ -32,6 +32,8 @@ namespace CORE.Loyal.Interfaces.Providers
         Task<long> ConsultarNumeroNoMegustaPorCancion(int idCancion);
         Task<CancionCompletaDTO> ConsultarCancionCompleta(int idCancion);
         Task<InterpretacionCompletaDTO> ConsultarInterpretacionCompleta(int id);
+        Task<long> ValidarLikeYDislikePorUsuario(int IdUsuario, int IdCancion);
+
 
     }
 }

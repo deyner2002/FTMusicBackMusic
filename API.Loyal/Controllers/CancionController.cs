@@ -128,7 +128,7 @@ namespace Api.Loyal.Controllers
 
 
 
-        [HttpGet]
+        [HttpPost]
         [Route("DesactivarCancion")]
         public async Task<ResponseModels> DesactivarCancion(int id)
         {
@@ -476,7 +476,7 @@ namespace Api.Loyal.Controllers
 
 
 
-        [HttpPost]
+        [HttpGet]
         [Route("ConsultarNumeroMegustaPorCancion")]
         public async Task<ResponseModels> ConsultarNumeroMegustaPorCancion(int idCancion)
         {
@@ -515,7 +515,7 @@ namespace Api.Loyal.Controllers
             return response;
         }
 
-        [HttpPost]
+        [HttpGet]
         [Route("ConsultarNumeroNoMegustaPorCancion")]
         public async Task<ResponseModels> ConsultarNumeroNoMegustaPorCancion(int idCancion)
         {
@@ -556,7 +556,7 @@ namespace Api.Loyal.Controllers
 
 
 
-        [HttpPost]
+        [HttpGet]
         [Route("ConsultarCancionCompleta")]
         public async Task<ResponseModels> ConsultarCancionCompleta(int idCancion)
         {
@@ -885,7 +885,7 @@ namespace Api.Loyal.Controllers
 
 
 
-        [HttpPost]
+        [HttpGet]
         [Route("ConsultarInterpretacionCompleta")]
         public async Task<ResponseModels> ConsultarInterpretacionCompleta(int id)
         {
@@ -915,7 +915,7 @@ namespace Api.Loyal.Controllers
         }
 
 
-        [HttpGet]
+        [HttpPost]
         [Route("DesactivarInterpretacion")]
         public async Task<ResponseModels> DesactivarInterpretacion(int id)
         {
@@ -994,6 +994,93 @@ namespace Api.Loyal.Controllers
 
             return response;
         }
+
+        [HttpGet]
+        [Route("ValidarLikeYDislikePorUsuario")]
+        public async Task<ResponseModels> ValidarLikeYDislikePorUsuario(int IdUsuario, int IdCancion)
+        {
+            ResponseModels response = new ResponseModels();
+            try
+            {
+                response.Datos = _provider.ValidarLikeYDislikePorUsuario(IdUsuario, IdCancion).Result;
+                long codigoRespuesta = long.Parse(response.Datos.ToString());
+                switch (codigoRespuesta)
+                {
+                    case -1:
+                        {
+                            response.IsError = true;
+                            response.Mensaje = "Campos vacios";
+                            break;
+                        }
+                    case -2:
+                        {
+                            response.IsError = true;
+                            response.Mensaje = "Error";
+                            break;
+                        }
+                    case 0:
+                        {
+                            response.IsError = false;
+                            response.Mensaje = "nada";
+                            break;
+                        }
+                    case 1:
+                        {
+                            response.IsError = false;
+                            response.Mensaje = "like";
+                            break;
+                        }
+                    case 2:
+                        {
+                            response.IsError = false;
+                            response.Mensaje = "dislike";
+                            break;
+                        }
+                }
+            }
+            catch(Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+                response.IsError = true;
+                response.Mensaje = "Error en obtener datos";
+            }
+            return response;
+        }
+
+
+
+
+        [HttpGet]
+        [Route("ConsultarInterpretacion")]
+        public async Task<ResponseModels> ConsultarInterpretacion(int id)
+        {
+            ResponseModels response = new ResponseModels();
+
+            try
+            {
+                response.Datos = _provider.ConsultarInterpretacion(id).Result;
+                if (response.Datos != null)
+                {
+                    response.IsError = false;
+                    response.Mensaje = "Ok";
+                }
+                else
+                {
+                    response.IsError = true;
+                    response.Mensaje = "La Interpretacion consultada no existe";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+                response.IsError = true;
+                response.Mensaje = "Error en obtener datos";
+            }
+
+            return response;
+        }
+
 
 
 

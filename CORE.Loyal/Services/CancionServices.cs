@@ -425,5 +425,23 @@ namespace Core.Loyal.Services
             return salida;
         }
 
+
+
+        public async Task<long> ValidarLikeYDislikePorUsuario(int IdUsuario, int IdCancion)
+        {
+            long salida = -2;
+            try
+            {
+                salida = await _provider.ValidarLikeYDislikePorUsuario(IdUsuario,IdCancion);
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+            }
+            return salida;
+        }
+
+
+
     }
 }

@@ -8,6 +8,7 @@ using CORE.Loyal.Interfaces.Providers;
 using Core.Loyal.Models.FTMUSIC;
 using CORE.Loyal.Models.FTMUSIC;
 using CORE.Loyal.Models.DTOs;
+using System.Net.Sockets;
 
 namespace Core.Loyal.Providers
 {
@@ -1635,6 +1636,64 @@ namespace Core.Loyal.Providers
                 return -1;//error
             }
         }
+
+        public async Task<long> ValidarLikeYDislikePorUsuario(int IdUsuario, int IdCancion) 
+        {
+            long salida = -1;//campos vacios
+            if (IdUsuario != null && IdCancion != null)
+            {
+                try
+                {
+                    await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.OpenAsync();
+                    cmd.CommandText = @"
+                                        SELECT ID FROM LIKES WHERE IDCANCION=:P_ID AND IDUSUARIO=:P_IDUSUARIO
+                                        ";
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Varchar2, Direction = ParameterDirection.Input, ParameterName = "IDCANCION", Value = IdCancion });
+                    cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Varchar2, Direction = ParameterDirection.Input, ParameterName = "IDUSUARIO", Value = IdUsuario });
+                    await cmd.ExecuteNonQueryAsync();
+                    
+                    var adapter = new OracleDataAdapter(cmd);
+                    var data = new DataSet("Datos");
+                    adapter.Fill(data);
+
+                    if (data.Tables[0].Rows.Count == 1)
+                    {
+                        salida = 1;//Like
+                    }
+                    else
+                    {
+                        cmd.CommandText = @"
+                                        SELECT ID FROM DISLIKES WHERE IDCANCION=:P_ID AND IDUSUARIO=:P_IDUSUARIO
+                                        ";
+                        cmd.Parameters.Clear();
+                        cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Varchar2, Direction = ParameterDirection.Input, ParameterName = "IDCANCION", Value = IdCancion });
+                        cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Varchar2, Direction = ParameterDirection.Input, ParameterName = "IDUSUARIO", Value = IdUsuario });
+                        await cmd.ExecuteNonQueryAsync();
+
+                        adapter = new OracleDataAdapter(cmd);
+                        data = new DataSet("Datos");
+                        adapter.Fill(data);
+                        if (data.Tables[0].Rows.Count == 1)
+                        {
+                            salida = 2;//Dislike
+                        }
+                        else
+                        {
+                            salida = 0;//nada
+                        }
+                    }
+                }
+                catch(Exception ex)
+                {
+                    salida = -2;//Error
+                }
+                await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.CloseAsync();
+            }
+                return salida;//campos vacios
+        }
+
+
 
 
 
