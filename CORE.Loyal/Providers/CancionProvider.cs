@@ -463,8 +463,8 @@ namespace Core.Loyal.Providers
                     {
                         cmd.CommandText = @"
                                         INSERT INTO COMENTARIOS
-                                        (ID, IDUSUARIO, IDCANCION,MENSAJE,FECHA,NOMBREUSUARIO)
-                                        VALUES(SEQUENCECOMENTARIOS.NEXTVAL,:P_IDUSUARIO,:P_IDCANCION,:P_MENSAJE,CURRENT_DATE,:P_NOMBREUSUARIO)
+                                        (ID, IDUSUARIO, IDCANCION,MENSAJE,FECHA,NOMBREUSUARIO,ESTADO)
+                                        VALUES(SEQUENCECOMENTARIOS.NEXTVAL,:P_IDUSUARIO,:P_IDCANCION,:P_MENSAJE,CURRENT_DATE,:P_NOMBREUSUARIO,'A')
                                         ";
                     cmd.Parameters.Clear();
                     cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDUSUARIO", Value = comentario.IdUsuario });
@@ -524,7 +524,7 @@ namespace Core.Loyal.Providers
             {
                 await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.OpenAsync();
 
-                cmd.CommandText = "SELECT ID, IDUSUARIO, IDCANCION, MENSAJE,FECHA,NOMBREUSUARIO FROM COMENTARIOS WHERE IDCANCION=:P_IDCANCION";
+                cmd.CommandText = "SELECT ID, IDUSUARIO, IDCANCION, MENSAJE,FECHA,NOMBREUSUARIO FROM COMENTARIOS WHERE IDCANCION=:P_IDCANCION AND ESTADO='A'";
                 cmd.Parameters.Clear();
                 cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDCANCION", Value = idCancion});
                 await cmd.ExecuteNonQueryAsync();
@@ -1692,6 +1692,133 @@ namespace Core.Loyal.Providers
             }
                 return salida;//campos vacios
         }
+
+
+
+
+
+
+
+
+
+
+
+        public async Task<long> DesactivarComentario(int id)
+        {
+            var _outs = new List<ComentarioModel>();
+            try
+            {
+                await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.OpenAsync();
+
+                cmd.CommandText = "SELECT ID FROM COMENTARIOS WHERE ID=:P_ID AND ESTADO='A'";
+                cmd.Parameters.Clear();
+                cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Varchar2, Direction = ParameterDirection.Input, ParameterName = "P_ID", Value = id });
+                await cmd.ExecuteNonQueryAsync();
+
+                var adapter = new OracleDataAdapter(cmd);
+                var data = new DataSet("Datos");
+                adapter.Fill(data);
+
+                await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.CloseAsync();
+
+                if (data.Tables[0].Rows.Count > 0)
+                {
+                    await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.OpenAsync();
+                    cmd.CommandText = @"
+                                        UPDATE COMENTARIOS SET
+                                        ESTADO='I'
+                                        WHERE ID=:P_ID
+                                        ";
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Varchar2, Direction = ParameterDirection.Input, ParameterName = "P_ID", Value = id });
+                    await cmd.ExecuteNonQueryAsync();
+                    await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.CloseAsync();
+                    return 1;
+                }
+                else
+                {
+                    return 0;
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.CloseAsync();
+                Plugins.WriteExceptionLog(ex);
+            }
+            return -1;
+        }
+
+
+
+
+
+
+
+        public async Task<long> ModificarComentario(ComentarioModel comentario)
+        {
+            try
+            {
+
+                if (comentario.IdCancion != null && comentario.IdUsuario != null)
+                {
+                    await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.OpenAsync();
+
+                    cmd.CommandText = @"
+                                        SELECT ID FROM COMENTARIOS WHERE ID=:P_IDB AND ESTADO='A'
+                                        ";
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Varchar2, Direction = ParameterDirection.Input, ParameterName = "P_IDB", Value = comentario.Id });
+                    await cmd.ExecuteNonQueryAsync();
+
+                    var adapter = new OracleDataAdapter(cmd);
+                    var data = new DataSet("Datos");
+                    adapter.Fill(data);
+
+
+
+                    if (data.Tables[0].Rows.Count == 1)
+                    {
+
+                        cmd.CommandText = @"
+                                        UPDATE DBMUSICFTMUSIC.COMENTARIOS SET
+                                        MENSAJE=:P_MENSAJE,
+                                        FECHA=:P_FECHA
+                                        WHERE ID = :P_ID AND ESTADO ='A'
+                        loc                ";
+                        cmd.Parameters.Clear();
+
+                        cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_MENSAJE", Value = comentario.Mensaje });
+                        cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Date, Direction = ParameterDirection.Input, ParameterName = "P_FECHA", Value = comentario.Fecha });
+                        cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_ID", Value = comentario.Id });
+                        await cmd.ExecuteNonQueryAsync();
+                        await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.CloseAsync();
+
+                    }
+                    else
+                    {
+                        return 0;//no existe
+                    }
+                    await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.CloseAsync();
+
+
+                    return 1;//todo bien
+                }
+                else
+                {
+                    return -2;//campos vacios
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.CloseAsync();
+                Plugins.WriteExceptionLog(ex);
+                return -1;//error
+            }
+        }
+
 
 
 

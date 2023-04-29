@@ -442,6 +442,40 @@ namespace Core.Loyal.Services
         }
 
 
+        public async Task<long> DesactivarComentario(int id)
+        {
+            long salida = -1;
+            try
+            {
+                salida = await _provider.DesactivarComentario(id);
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+            }
+            return salida;
+        }
+
+
+
+
+
+        public async Task<long> ModificarComentario(ComentarioModel comentario)
+        {
+            long salida = -1;
+            try
+            {
+                salida = await _provider.ModificarComentario(comentario);
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+            }
+            return salida;
+        }
+
+
+
 
     }
 }

@@ -32,6 +32,8 @@ namespace CORE.Loyal.Interfaces.Services
         Task<InterpretacionCompletaDTO> ConsultarInterpretacionCompleta(int id);
         Task<List<InterpretacionModel>> GetListInterpretaciones();
         Task<long> ValidarLikeYDislikePorUsuario(int IdUsuario, int IdCancion);
+        Task<long> DesactivarComentario(int id);
+        Task<long> ModificarComentario(ComentarioModel comentario);
 
     }
 }

@@ -1084,5 +1084,95 @@ namespace Api.Loyal.Controllers
 
 
 
+
+        [HttpPost]
+        [Route("DesactivarComentario")]
+        public async Task<ResponseModels> DesactivarComentario(int id)
+        {
+            ResponseModels response = new ResponseModels();
+
+            try
+            {
+                response.Datos = _provider.DesactivarComentario(id).Result;
+                long codigoRespuesta = long.Parse(response.Datos.ToString());
+                if (codigoRespuesta == 1)
+                {
+                    response.IsError = false;
+                    response.Mensaje = "Comentario Desactivado";
+                }
+                if (codigoRespuesta == 0)
+                {
+                    response.IsError = true;
+                    response.Mensaje = "El comentario a desactivar no existe";
+                }
+                if (codigoRespuesta == -1)
+                {
+                    response.IsError = true;
+                    response.Mensaje = "Error";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+                response.IsError = true;
+                response.Mensaje = "Error en obtener datos";
+            }
+
+            return response;
+        }
+
+
+
+
+
+
+
+        [HttpPost]
+        [Route("ModificarComentario")]
+        public async Task<ResponseModels> ModificarComentario(ComentarioModel comentario)
+        {
+            ResponseModels response = new ResponseModels();
+
+            try
+            {
+                response.Datos = _provider.ModificarComentario(comentario).Result;
+                long codigoRespuesta = long.Parse(response.Datos.ToString());
+                if (codigoRespuesta == 1)
+                {
+                    response.IsError = false;
+                    response.Mensaje = "Comentario Modificado";
+                }
+                if (codigoRespuesta == 0)
+                {
+                    response.IsError = true;
+                    response.Mensaje = "El comentario a Modificar no existe";
+                }
+                if (codigoRespuesta == -1)
+                {
+                    response.IsError = true;
+                    response.Mensaje = "Error";
+                }
+                if (codigoRespuesta == -2)
+                {
+                    response.IsError = true;
+                    response.Mensaje = "Campos vacios";
+                }
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+                response.IsError = true;
+                response.Mensaje = "Error en obtener datos";
+            }
+
+            return response;
+        }
+
+
+
+
+
+
     }
 }
