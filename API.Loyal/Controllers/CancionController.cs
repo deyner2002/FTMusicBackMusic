@@ -94,7 +94,7 @@ namespace Api.Loyal.Controllers
 
 
 
-        [HttpGet]
+        [HttpPost]
         [Route("ConsultarCancion")]
         public async Task<ResponseModels> ConsultarCancion(int id)
         {
@@ -216,7 +216,7 @@ namespace Api.Loyal.Controllers
 
 
 
-        [HttpGet]
+        [HttpPost]
         [Route("ConsultarCancionPorUsuario")]
         public async Task<ResponseModels> ConsutlarCancionPorUsuario(int idUsuario)
         {
@@ -249,7 +249,7 @@ namespace Api.Loyal.Controllers
 
 
 
-        [HttpGet]
+        [HttpPost]
         [Route("ConsultarCancionPorNombre")]
         public async Task<ResponseModels> ConsultarCancionPorNombre(string nombre)
         {
@@ -337,7 +337,7 @@ namespace Api.Loyal.Controllers
 
 
 
-        [HttpGet]
+        [HttpPost]
         [Route("ConsultarComentarioPorCancion")]
         public async Task<ResponseModels> ConsultarComentarioPorCancion(int idCancion)
         {
@@ -476,7 +476,7 @@ namespace Api.Loyal.Controllers
 
 
 
-        [HttpGet]
+        [HttpPost]
         [Route("ConsultarNumeroMegustaPorCancion")]
         public async Task<ResponseModels> ConsultarNumeroMegustaPorCancion(int idCancion)
         {
@@ -515,7 +515,7 @@ namespace Api.Loyal.Controllers
             return response;
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("ConsultarNumeroNoMegustaPorCancion")]
         public async Task<ResponseModels> ConsultarNumeroNoMegustaPorCancion(int idCancion)
         {
@@ -556,7 +556,7 @@ namespace Api.Loyal.Controllers
 
 
 
-        [HttpGet]
+        [HttpPost]
         [Route("ConsultarCancionCompleta")]
         public async Task<ResponseModels> ConsultarCancionCompleta(int idCancion)
         {
@@ -621,7 +621,7 @@ namespace Api.Loyal.Controllers
         }
 
 
-        [HttpGet]
+        [HttpPost]
         [Route("ConsultarInterpretacionPorNombre")]
         public async Task<ResponseModels> ConsultarInterpretacionPorNombre(string nombre)
         {
@@ -656,7 +656,7 @@ namespace Api.Loyal.Controllers
 
 
 
-        [HttpGet]
+        [HttpPost]
         [Route("ConsultarInterpretacionPorUsuario")]
         public async Task<ResponseModels> ConsutlarInterpretacionPorUsuario(int idUsuario)
         {
@@ -885,7 +885,7 @@ namespace Api.Loyal.Controllers
 
 
 
-        [HttpGet]
+        [HttpPost]
         [Route("ConsultarInterpretacionCompleta")]
         public async Task<ResponseModels> ConsultarInterpretacionCompleta(int id)
         {
@@ -995,7 +995,7 @@ namespace Api.Loyal.Controllers
             return response;
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("ValidarLikeYDislikePorUsuario")]
         public async Task<ResponseModels> ValidarLikeYDislikePorUsuario(int IdUsuario, int IdCancion)
         {
@@ -1050,7 +1050,7 @@ namespace Api.Loyal.Controllers
 
 
 
-        [HttpGet]
+        [HttpPost]
         [Route("ConsultarInterpretacion")]
         public async Task<ResponseModels> ConsultarInterpretacion(int id)
         {

@@ -1786,7 +1786,7 @@ namespace Core.Loyal.Providers
                                         MENSAJE=:P_MENSAJE,
                                         FECHA=:P_FECHA
                                         WHERE ID = :P_ID AND ESTADO ='A'
-                        loc                ";
+                                        ";
                         cmd.Parameters.Clear();
 
                         cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_MENSAJE", Value = comentario.Mensaje });
