@@ -20,6 +20,8 @@ builder.Services.Configure<ConnectionStrings>(builder.Configuration.GetSection("
 
 builder.Services.AddScoped<ICancionServices, CancionServices>();
 builder.Services.AddScoped<ICancionProvider, CancionProvider>();
+builder.Services.AddScoped<IComentarioProvider, ComentarioProvider>();
+builder.Services.AddScoped<ILikeProvider, LikeProvider>();
 
 
 builder.Services.AddSwaggerGen();

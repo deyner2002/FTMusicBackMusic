@@ -1786,7 +1786,7 @@ namespace Core.Loyal.Providers
                                         MENSAJE=:P_MENSAJE,
                                         FECHA=:P_FECHA
                                         WHERE ID = :P_ID AND ESTADO ='A'
-                                        ";
+                        loc                ";
                         cmd.Parameters.Clear();
 
                         cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_MENSAJE", Value = comentario.Mensaje });
@@ -1823,6 +1823,252 @@ namespace Core.Loyal.Providers
 
 
 
+
+        public async Task<long> AniadirCancionAFavoritos(int idUsuario, int idCancion)
+        {
+            long consecutivo = 0;
+            try
+            {
+                if (idUsuario != null || idCancion != null)
+                {
+                    cmd.CommandText = @"
+                                        SELECT * FROM CANCIONESFAVORITAS WHERE IDUSUARIO=:P_IDUSUARIO AND IDCANCION=:P_IDCANCION
+                                        ";
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDUSUARIO", Value = idUsuario });
+                    cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDCANCION", Value = idCancion });
+                    var adapter = new OracleDataAdapter(cmd);
+                    var data = new DataSet("Datos");
+                    adapter.Fill(data);
+                    if (data.Tables[0].Rows.Count == 0)
+                    {
+
+                        int filasAfectadas = 0;
+                        await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.OpenAsync();
+                        cmd.CommandText = @"
+                                        INSERT INTO CANCIONESFAVORITAS(ID,IDUSUARIO,IDCANCION,TIPO)
+                                        SELECT SEQUENCECANCIONESFAVORITAS.NEXTVAL,:P_IDUSUARIO,CANCIONES.ID,'C' 
+                                        FROM CANCIONES 
+                                        WHERE CANCIONES.ID=:P_IDCANCION
+                                        ";
+                        cmd.Parameters.Clear();
+                        cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDUSUARIO", Value = idUsuario });
+                        cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDCANCION", Value = idCancion });
+                        filasAfectadas = await cmd.ExecuteNonQueryAsync();
+                        if (filasAfectadas == 1)
+                        {
+                            cmd.CommandText = @"
+                                        select SEQUENCECANCIONESFAVORITAS.currval from dual
+                                        ";
+                            await cmd.ExecuteNonQueryAsync();
+
+                            adapter = new OracleDataAdapter(cmd);
+                            data = new DataSet("Datos");
+                            adapter.Fill(data);
+                            if (data.Tables[0].Rows.Count > 0)
+                            {
+                                foreach (DataRow item in data.Tables[0].Rows)
+                                {
+                                    consecutivo = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[0]) ? Convert.ToInt64(item.ItemArray[0]) : 0;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            consecutivo = -3;
+                        }
+                    }
+                    else
+                    {
+                        consecutivo = -4;
+                    }
+                    await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.CloseAsync();
+                    return consecutivo;
+                }
+                else
+                {
+                    return -2;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.CloseAsync();
+                Plugins.WriteExceptionLog(ex);
+                return -1;
+            }
+        }
+
+
+
+        public async Task<long> AniadirInterpretacionAFavoritos(int idUsuario, int idCancion)
+        {
+            long consecutivo = 0;
+            try
+            {
+                if (idUsuario != null || idCancion != null)
+                {
+
+                    cmd.CommandText = @"
+                                        SELECT * FROM CANCIONESFAVORITAS WHERE IDUSUARIO=:P_IDUSUARIO AND IDCANCION=:P_IDCANCION
+                                        ";
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDUSUARIO", Value = idUsuario });
+                    cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDCANCION", Value = idCancion });
+                    var adapter = new OracleDataAdapter(cmd);
+                    var data = new DataSet("Datos");
+                    adapter.Fill(data);
+                    if (data.Tables[0].Rows.Count == 0)
+                    {
+                        int filasAfectadas = 0;
+                        await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.OpenAsync();
+                        cmd.CommandText = @"
+                                        INSERT INTO CANCIONESFAVORITAS(ID,IDUSUARIO,IDCANCION,TIPO)
+                                        SELECT SEQUENCECANCIONESFAVORITAS.NEXTVAL,:P_IDUSUARIO,INTERPRETACIONES.ID,'I' 
+                                        FROM INTERPRETACIONES 
+                                        WHERE INTERPRETACIONES.ID=:P_IDCANCION
+                                        ";
+                        cmd.Parameters.Clear();
+                        cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDUSUARIO", Value = idUsuario });
+                        cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDCANCION", Value = idCancion });
+                        filasAfectadas = await cmd.ExecuteNonQueryAsync();
+                        if (filasAfectadas == 1)
+                        {
+                            cmd.CommandText = @"
+                                        select SEQUENCECANCIONESFAVORITAS.currval from dual
+                                        ";
+                            await cmd.ExecuteNonQueryAsync();
+
+                            adapter = new OracleDataAdapter(cmd);
+                            data = new DataSet("Datos");
+                            adapter.Fill(data);
+                            if (data.Tables[0].Rows.Count > 0)
+                            {
+                                foreach (DataRow item in data.Tables[0].Rows)
+                                {
+                                    consecutivo = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[0]) ? Convert.ToInt64(item.ItemArray[0]) : 0;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            consecutivo = -3;
+                        }
+                    }
+                    else
+                    {
+                        consecutivo = -4;
+                    }
+                    await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.CloseAsync();
+                    return consecutivo;
+                }
+                else
+                {
+                    return -2;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.CloseAsync();
+                Plugins.WriteExceptionLog(ex);
+                return -1;
+            }
+        }
+
+
+        public async Task<List<CancionModel>> ConsultarCancionesFavoritasPorUsuario(int idUsuario)
+        {
+            var _outs = new List<CancionModel>();
+            try
+            {
+                await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.OpenAsync();
+
+                cmd.CommandText = "SELECT c.ID, c.NOMBRE , c.LINK FROM CANCIONES c JOIN CANCIONESFAVORITAS cf ON c.ID=cf.IDCANCION WHERE c.ESTADO='A' AND cf.IDUSUARIO=:P_IDUSUARIO AND cf.TIPO='C'";
+                cmd.Parameters.Clear();
+                cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDUSUARIO", Value = idUsuario });
+                await cmd.ExecuteNonQueryAsync();
+
+                var adapter = new OracleDataAdapter(cmd);
+                var data = new DataSet("Datos");
+                adapter.Fill(data);
+
+                await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.CloseAsync();
+
+                if (data.Tables[0].Rows.Count > 0)
+                {
+                    foreach (DataRow item in data.Tables[0].Rows)
+                    {
+                        CancionModel cancionModel = new CancionModel
+                        {
+                            Id = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[0]) ? Convert.ToInt64(item.ItemArray[0]) : 0,
+                            Nombre = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[1]) ? Convert.ToString(item.ItemArray[1]) : "SIN NOMBRE",
+                            Link = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[2]) ? Convert.ToString(item.ItemArray[2]) : "SIN LINK"
+                        };
+
+                        _outs.Add(cancionModel);
+                    }
+                }
+                else
+                {
+                    return null;
+                }
+
+                return _outs;
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+            }
+            return null;
+        }
+
+
+        public async Task<List<CancionModel>> ConsultarInterpretacionesFavoritasPorUsuario(int idUsuario)
+        {
+            var _outs = new List<CancionModel>();
+            try
+            {
+                await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.OpenAsync();
+
+                cmd.CommandText = "SELECT c.ID, c.NOMBRE , c.LINK FROM CANCIONES c JOIN CANCIONESFAVORITAS cf ON c.ID=cf.IDCANCION WHERE c.ESTADO='A' AND cf.IDUSUARIO=:P_IDUSUARIO AND cf.TIPO='I'";
+                cmd.Parameters.Clear();
+                cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDUSUARIO", Value = idUsuario });
+                await cmd.ExecuteNonQueryAsync();
+
+                var adapter = new OracleDataAdapter(cmd);
+                var data = new DataSet("Datos");
+                adapter.Fill(data);
+
+                await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.CloseAsync();
+
+                if (data.Tables[0].Rows.Count > 0)
+                {
+                    foreach (DataRow item in data.Tables[0].Rows)
+                    {
+                        CancionModel cancionModel = new CancionModel
+                        {
+                            Id = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[0]) ? Convert.ToInt64(item.ItemArray[0]) : 0,
+                            Nombre = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[1]) ? Convert.ToString(item.ItemArray[1]) : "SIN NOMBRE",
+                            Link = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[2]) ? Convert.ToString(item.ItemArray[2]) : "SIN LINK"
+                        };
+
+                        _outs.Add(cancionModel);
+                    }
+                }
+                else
+                {
+                    return null;
+                }
+
+                return _outs;
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+            }
+            return null;
+        }
 
     }
 }

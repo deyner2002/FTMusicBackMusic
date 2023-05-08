@@ -34,6 +34,10 @@ namespace CORE.Loyal.Interfaces.Services
         Task<long> ValidarLikeYDislikePorUsuario(int IdUsuario, int IdCancion);
         Task<long> DesactivarComentario(int id);
         Task<long> ModificarComentario(ComentarioModel comentario);
+        Task<long> AniadirInterpretacionAFavoritos(int idUsuario, int idCancion);
+        Task<long> AniadirCancionAFavoritos(int idUsuario, int idCancion);
+        Task<List<CancionModel>> ConsultarCancionesFavoritasPorUsuario(int idUsuario);
+        Task<List<CancionModel>> ConsultarInterpretacionesFavoritasPorUsuario(int idUsuario);
 
     }
 }

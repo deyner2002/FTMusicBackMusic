@@ -10,9 +10,13 @@ namespace Core.Loyal.Services
     public class CancionServices : ICancionServices
     {
         private readonly ICancionProvider _provider;
-        public CancionServices(ICancionProvider provider)
+        private readonly IComentarioProvider _providerComentario;
+        private readonly ILikeProvider _providerLike;
+        public CancionServices(ICancionProvider provider, IComentarioProvider providerComentario, ILikeProvider providerLike)
         {
             _provider = provider;
+            _providerComentario = providerComentario;
+            _providerLike = providerLike;
         }
         public async Task<List<CancionModel>> GetListCanciones()
         {
@@ -232,18 +236,49 @@ namespace Core.Loyal.Services
             return resultado;
         }
 
+        
+        //public async Task<CancionCompletaDTO> ConsultarCancionCompleta(int idCancion)
+        //{
+        //    CancionCompletaDTO cancionCompletaDTO = new CancionCompletaDTO();
+        //    try
+        //    {
+        //        cancionCompletaDTO = await _provider.ConsultarCancionCompleta(idCancion);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Plugins.WriteExceptionLog(ex);
+        //    }
+        //    return cancionCompletaDTO;
+        //}
+
         public async Task<CancionCompletaDTO> ConsultarCancionCompleta(int idCancion)
         {
-            CancionCompletaDTO cancionCompletaDTO = new CancionCompletaDTO();
             try
             {
-                cancionCompletaDTO = await _provider.ConsultarCancionCompleta(idCancion);
+                CancionCompletaDTO cancionCompletaDTO = new CancionCompletaDTO();
+                CancionModel cancion = _provider.ConsultarCancion(idCancion).Result;
+                if (cancion != null)
+                {
+                    List<ComentarioModel> comentarios = _providerComentario.ConsultarComentarioPorCancion(idCancion).Result;
+                    long numeroLikes = _providerLike.ConsultarNumeroMegustaPorCancion(idCancion).Result;
+                    long numeroDisLikes = _providerLike.ConsultarNumeroNoMegustaPorCancion(idCancion).Result;
+                    if (numeroLikes < 0) { numeroLikes = 0; }
+                    if (numeroDisLikes < 0) { numeroDisLikes = 0; }
+                    cancionCompletaDTO.NumeroDisLikes = numeroDisLikes;
+                    cancionCompletaDTO.NumeroLikes = numeroLikes;
+                    cancionCompletaDTO.MapearCancion(cancion);
+                    cancionCompletaDTO.Comentarios = comentarios;
+                    return cancionCompletaDTO;
+                }
+                else
+                {
+                    return null;
+                }
             }
             catch (Exception ex)
             {
-                Plugins.WriteExceptionLog(ex);
+                return null;
             }
-            return cancionCompletaDTO;
         }
 
 
@@ -476,6 +511,62 @@ namespace Core.Loyal.Services
 
 
 
+        public async Task<long> AniadirInterpretacionAFavoritos(int idUsuario, int idCancion)
+        {
+            long salida = -1;
+            try
+            {
+                salida = await _provider.AniadirInterpretacionAFavoritos(idUsuario,idCancion);
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+            }
+            return salida;
+        }
+
+        public async Task<long> AniadirCancionAFavoritos(int idUsuario, int idCancion)
+        {
+            long salida = -1;
+            try
+            {
+                salida = await _provider.AniadirCancionAFavoritos(idUsuario, idCancion);
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+            }
+            return salida;
+        }
+
+
+        public async Task<List<CancionModel>> ConsultarCancionesFavoritasPorUsuario(int idUsuario)
+        {
+            List<CancionModel> list = new List<CancionModel>();
+            try
+            {
+                list = await _provider.ConsultarCancionesFavoritasPorUsuario(idUsuario);
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+            }
+            return list;
+        }
+
+        public async Task<List<CancionModel>> ConsultarInterpretacionesFavoritasPorUsuario(int idUsuario)
+        {
+            List<CancionModel> list = new List<CancionModel>();
+            try
+            {
+                list = await _provider.ConsultarCancionesFavoritasPorUsuario(idUsuario);
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+            }
+            return list;
+        }
 
     }
 }
