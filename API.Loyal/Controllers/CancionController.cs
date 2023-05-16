@@ -21,7 +21,7 @@ namespace Api.Loyal.Controllers
             _provider = provider;
         }
 
-        [HttpPost]
+        [HttpGet]
         [Route("GetList")]
         public async Task<ResponseModels> GetListCanciones()
         {
@@ -681,7 +681,7 @@ namespace Api.Loyal.Controllers
 
 
 
-        [HttpPost]
+        [HttpGet]
         [Route("GetListInterpretaciones")]
         public async Task<ResponseModels> GetListInterpretaciones()
         {
