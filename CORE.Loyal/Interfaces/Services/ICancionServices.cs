@@ -39,5 +39,7 @@ namespace CORE.Loyal.Interfaces.Services
         Task<List<CancionModel>> ConsultarCancionesFavoritasPorUsuario(int idUsuario);
         Task<List<CancionModel>> ConsultarInterpretacionesFavoritasPorUsuario(int idUsuario);
 
+        Task<long> EliminarDeFavoritos(int idUsuario, int idCancion);
+
     }
 }

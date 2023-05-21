@@ -568,5 +568,22 @@ namespace Core.Loyal.Services
             return list;
         }
 
+
+
+
+        public async Task<long> EliminarDeFavoritos(int idUsuario, int idCancion)
+        {
+            long salida = -1;
+            try
+            {
+                salida = await _provider.EliminarDeFavoritos(idUsuario, idCancion);
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+            }
+            return salida;
+        }
+
     }
 }

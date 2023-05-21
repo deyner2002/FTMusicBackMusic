@@ -2070,5 +2070,89 @@ namespace Core.Loyal.Providers
             return null;
         }
 
+
+
+
+
+
+
+
+
+
+
+
+
+        public async Task<long> EliminarDeFavoritos(int idUsuario, int idCancion)
+        {
+            long consecutivo = 0;
+            try
+            {
+                if (idUsuario != null && idCancion != null)
+                {
+                    await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.OpenAsync();
+
+                    cmd.CommandText = @"
+                                        SELECT * FROM CANCIONESFAVORITAS WHERE IDCANCION=:P_IDCANCION AND IDUSUARIO=:P_IDUSUARIO
+                                   ";
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDCANCION", Value = idCancion });
+                    cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDUSUARIO", Value = idUsuario });
+                    await cmd.ExecuteNonQueryAsync();
+
+                    var adapter = new OracleDataAdapter(cmd);
+                    var data = new DataSet("Datos");
+                    adapter.Fill(data);
+                    if (data.Tables[0].Rows.Count > 0)
+                    {
+                        cmd.CommandText = @"
+                                        DELETE FROM CANCIONESFAVORITAS WHERE IDCANCION=:P_IDCANCION AND IDUSUARIO=:P_IDUSUARIO
+                                           ";
+                        cmd.Parameters.Clear();
+                        cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDCANCION", Value = idCancion });
+                        cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDUSUARIO", Value = idUsuario });
+                        await cmd.ExecuteNonQueryAsync();
+
+                        cmd.CommandText = @"
+                                        SELECT * FROM CANCIONESFAVORITAS WHERE IDCANCION=:P_IDCANCION AND IDUSUARIO=:P_IDUSUARIO
+                                   ";
+                        cmd.Parameters.Clear();
+                        cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDCANCION", Value = idCancion });
+                        cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDUSUARIO", Value = idUsuario });
+                        await cmd.ExecuteNonQueryAsync();
+
+                        adapter = new OracleDataAdapter(cmd);
+                        data = new DataSet("Datos");
+                        adapter.Fill(data);
+
+
+
+                        if (data.Tables[0].Rows.Count == 0)
+                        {
+                            consecutivo = 1;
+                        }
+
+                    }
+                    else
+                    {
+                        consecutivo = -2;   //no se encuentra en favoritos
+                    }
+                }
+                else
+                {
+                    consecutivo = -3;    //campos vacios
+                }
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+                consecutivo = -1;
+            }
+            await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.CloseAsync();
+            return consecutivo;
+        }
+
+
+
+
     }
 }

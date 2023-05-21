@@ -1611,5 +1611,70 @@ namespace Api.Loyal.Controllers
             return response;
         }
 
+
+
+
+
+
+
+
+        [HttpPost]
+        [Route("EliminarDeFavoritos")]
+        public async Task<ResponseModels> EliminarDeFavoritos(int idUsuario, int idCancion)
+        {
+            ResponseModels response = new ResponseModels();
+            int intentosRestantes = 3;
+            while (intentosRestantes > 0)
+            {
+                try
+                {
+                    response.Datos = _provider.EliminarDeFavoritos(idUsuario, idCancion).Result;
+                    long codigoRespuesta = long.Parse(response.Datos.ToString());
+                    if (codigoRespuesta == 1)
+                    {
+                        response.IsError = false;
+                        response.Mensaje = "La cancion ha sido eliminada da favoritos";
+                        intentosRestantes = 0;
+                    }
+                    else
+                    {
+
+                        if (codigoRespuesta == -2)
+                        {
+                            response.IsError = true;
+                            response.Mensaje = "La cancion que desea eliminar de favoritos no existe";
+                            intentosRestantes = 0;
+                        }
+                        if (codigoRespuesta == -3)
+                        {
+                            response.IsError = true;
+                            response.Mensaje = "campos obligatorios se encuentran vacios";
+                            intentosRestantes = 0;
+                        }
+                        if (codigoRespuesta == -1)
+                        {
+                            intentosRestantes--;
+                            response.IsError = true;
+                            response.Mensaje = "Error";
+                            await Task.Delay(1000);
+                        }
+                    }
+
+
+                }
+                catch (Exception ex)
+                {
+                    intentosRestantes--;
+                    Plugins.WriteExceptionLog(ex);
+                    response.IsError = true;
+                    response.Mensaje = "Error en obtener datos";
+                    await Task.Delay(1000);
+                }
+            }
+            return response;
+        }
+
+
+
     }
 }
