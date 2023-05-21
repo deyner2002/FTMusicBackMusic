@@ -1436,12 +1436,12 @@ namespace Api.Loyal.Controllers
                         if (codigoRespuesta == -4)
                         {
                             intentosRestantes = 0;
-                            response.IsError = false;
+                            response.IsError = true;
                             response.Mensaje = "Esta cancion ya se encuentra en la lista de favoritos correspondiente a este usuario";
                         }
                         if (codigoRespuesta == -3)
                         {
-                            response.IsError = false;
+                            response.IsError = true;
                             response.Mensaje = "La cancion que desea aniadir a favoritos no existe";
                             intentosRestantes = 0;
                         }
@@ -1497,12 +1497,12 @@ namespace Api.Loyal.Controllers
                         if (codigoRespuesta == -4)
                         {
                             intentosRestantes = 0;
-                            response.IsError = false;
+                            response.IsError = true;
                             response.Mensaje = "Esta interpretacion ya se encuentra en la lista de favoritos correspondiente a este usuario";
                         }
                         if (codigoRespuesta == -3)
                         {
-                            response.IsError = false;
+                            response.IsError = true;
                             response.Mensaje = "La interpretacion que desea aniadir a favoritos no existe";
                             intentosRestantes = 0;
                         }
