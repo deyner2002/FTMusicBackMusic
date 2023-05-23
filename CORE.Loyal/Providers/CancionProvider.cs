@@ -29,7 +29,7 @@ namespace Core.Loyal.Providers
             {
                 await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.OpenAsync();
                 
-                cmd.CommandText = "SELECT ID, IDUSUARIO, IDALBUN, NOMBRE,GENERO,LETRA,FECHAPUBLICACION,LINK FROM CANCIONES WHERE ESTADO='A'";
+                cmd.CommandText = "SELECT ID, IDUSUARIO, IDALBUN, NOMBRE,NOMBREAUTOR,GENERO,LETRA,FECHAPUBLICACION,LINK FROM CANCIONES WHERE ESTADO='A'";
                 await cmd.ExecuteNonQueryAsync();
 
                 var adapter = new OracleDataAdapter(cmd);
@@ -48,10 +48,11 @@ namespace Core.Loyal.Providers
                             IdUsuario = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[1]) ? Convert.ToInt64(item.ItemArray[1]) : 0,
                             IdAlbun = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[2]) ? Convert.ToInt64(item.ItemArray[2]) : 0,
                             Nombre = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[3]) ? Convert.ToString(item.ItemArray[3]) : "SIN NOMBRE",
-                            Genero = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[4]) ? Convert.ToString(item.ItemArray[4]) : "SIN GENERO",
-                            Letra = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[5]) ? Convert.ToString(item.ItemArray[5]).Replace("-", "\n") : "SIN LETRA",
-                            FechaPublicacion = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[6]) ? Convert.ToDateTime(item.ItemArray[6]) : null,
-                            Link = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[7]) ? Convert.ToString(item.ItemArray[7]) : "SIN LINK"
+                            NombreAutor = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[4]) ? Convert.ToString(item.ItemArray[4]) : "SIN NOMBRE",
+                            Genero = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[5]) ? Convert.ToString(item.ItemArray[5]) : "SIN GENERO",
+                            Letra = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[6]) ? Convert.ToString(item.ItemArray[6]).Replace("-", "\n") : "SIN LETRA",
+                            FechaPublicacion = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[7]) ? Convert.ToDateTime(item.ItemArray[7]) : null,
+                            Link = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[8]) ? Convert.ToString(item.ItemArray[8]) : "SIN LINK"
                         };
                         
                         _outs.Add(cancionModel);
@@ -78,13 +79,14 @@ namespace Core.Loyal.Providers
                     await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.OpenAsync();
                     cmd.CommandText = @"
                                         INSERT INTO CANCIONES
-                                        (ID, IDUSUARIO, IDALBUN, NOMBRE,GENERO,LETRA,FECHAPUBLICACION,LINK,ESTADO)
-                                        VALUES(SEQUENCECANCION.NEXTVAL,:P_IDUSUARIO,:P_IDALBUN ,:P_NOMBRE, :P_GENERO, :P_LETRA,CURRENT_DATE,:P_LINK,'A')
+                                        (ID, IDUSUARIO, IDALBUN, NOMBRE, NOMBREAUTOR,GENERO,LETRA,FECHAPUBLICACION,LINK,ESTADO)
+                                        VALUES(SEQUENCECANCION.NEXTVAL,:P_IDUSUARIO,:P_IDALBUN ,:P_NOMBRE,:P_NOMBREAUTOR, :P_GENERO, :P_LETRA,CURRENT_DATE,:P_LINK,'A')
                                         ";
                     cmd.Parameters.Clear();
                     cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDUSUARIO", Value = cancion.IdUsuario });
                     cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDALBUN", Value = cancion.IdAlbun });
                     cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Varchar2, Direction = ParameterDirection.Input, ParameterName = "P_NOMBRE", Value = cancion.Nombre });
+                    cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Varchar2, Direction = ParameterDirection.Input, ParameterName = "P_NOMBREAUTOR", Value = cancion.NombreAutor });
                     cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Varchar2, Direction = ParameterDirection.Input, ParameterName = "P_GENERO", Value = cancion.Genero });
                     cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Varchar2, Direction = ParameterDirection.Input, ParameterName = "P_LETRA", Value = cancion.Letra });
                     cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Varchar2, Direction = ParameterDirection.Input, ParameterName = "P_LINK", Value = cancion.Link });
@@ -137,7 +139,7 @@ namespace Core.Loyal.Providers
             {
                 await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.OpenAsync();
 
-                cmd.CommandText = "SELECT ID, IDUSUARIO, IDALBUN, NOMBRE,GENERO,LETRA,FECHAPUBLICACION,LINK FROM CANCIONES WHERE ID=:P_ID AND ESTADO='A'";
+                cmd.CommandText = "SELECT ID, IDUSUARIO, IDALBUN, NOMBRE,NOMBREAUTOR,GENERO,LETRA,FECHAPUBLICACION,LINK FROM CANCIONES WHERE ID=:P_ID AND ESTADO='A'";
                 cmd.Parameters.Clear();
                 cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Varchar2, Direction = ParameterDirection.Input, ParameterName = "P_ID", Value = id });
                 await cmd.ExecuteNonQueryAsync();
@@ -158,10 +160,11 @@ namespace Core.Loyal.Providers
                             IdUsuario = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[1]) ? Convert.ToInt64(item.ItemArray[1]) : 0,
                             IdAlbun = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[2]) ? Convert.ToInt64(item.ItemArray[2]) : 0,
                             Nombre = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[3]) ? Convert.ToString(item.ItemArray[3]) : "SIN NOMBRE",
-                            Genero = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[4]) ? Convert.ToString(item.ItemArray[4]) : "SIN GENERO",
-                            Letra = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[5]) ? Convert.ToString(item.ItemArray[5]).Replace("-", "\n") : "SIN LETRA",
-                            FechaPublicacion = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[6]) ? Convert.ToDateTime(item.ItemArray[6]) : null,
-                            Link = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[7]) ? Convert.ToString(item.ItemArray[7]) : "SIN LINK"
+                            NombreAutor = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[4]) ? Convert.ToString(item.ItemArray[4]) : "SIN NOMBRE",
+                            Genero = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[5]) ? Convert.ToString(item.ItemArray[5]) : "SIN GENERO",
+                            Letra = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[6]) ? Convert.ToString(item.ItemArray[6]).Replace("-", "\n") : "SIN LETRA",
+                            FechaPublicacion = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[7]) ? Convert.ToDateTime(item.ItemArray[7]) : null,
+                            Link = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[8]) ? Convert.ToString(item.ItemArray[8]) : "SIN LINK"
                         };
 
                         _outs.Add(cancionModel);
@@ -322,7 +325,7 @@ namespace Core.Loyal.Providers
             {
                 await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.OpenAsync();
 
-                cmd.CommandText = "SELECT ID, IDUSUARIO, IDALBUN, NOMBRE,GENERO,LETRA,FECHAPUBLICACION,LINK FROM CANCIONES WHERE ESTADO='A' AND IDUSUARIO=:P_IDUSUARIO";
+                cmd.CommandText = "SELECT ID, IDUSUARIO, IDALBUN, NOMBRE,NOMBREAUTOR,GENERO,LETRA,FECHAPUBLICACION,LINK FROM CANCIONES WHERE ESTADO='A' AND IDUSUARIO=:P_IDUSUARIO";
                 cmd.Parameters.Clear();
                 cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDUSUARIO", Value = idUsuario });
                 await cmd.ExecuteNonQueryAsync();
@@ -343,10 +346,11 @@ namespace Core.Loyal.Providers
                             IdUsuario = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[1]) ? Convert.ToInt64(item.ItemArray[1]) : 0,
                             IdAlbun = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[2]) ? Convert.ToInt64(item.ItemArray[2]) : 0,
                             Nombre = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[3]) ? Convert.ToString(item.ItemArray[3]) : "SIN NOMBRE",
-                            Genero = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[4]) ? Convert.ToString(item.ItemArray[4]) : "SIN GENERO",
-                            Letra = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[5]) ? Convert.ToString(item.ItemArray[5]).Replace("-", "\n") : "SIN LETRA",
-                            FechaPublicacion = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[6]) ? Convert.ToDateTime(item.ItemArray[6]) : null,
-                            Link = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[7]) ? Convert.ToString(item.ItemArray[7]) : "SIN LINK"
+                            NombreAutor = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[4]) ? Convert.ToString(item.ItemArray[4]) : "SIN NOMBRE",
+                            Genero = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[5]) ? Convert.ToString(item.ItemArray[5]) : "SIN GENERO",
+                            Letra = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[6]) ? Convert.ToString(item.ItemArray[6]).Replace("-", "\n") : "SIN LETRA",
+                            FechaPublicacion = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[7]) ? Convert.ToDateTime(item.ItemArray[7]) : null,
+                            Link = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[8]) ? Convert.ToString(item.ItemArray[8]) : "SIN LINK"
                         };
 
                         _outs.Add(cancionModel);
@@ -390,7 +394,7 @@ namespace Core.Loyal.Providers
             {
                 await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.OpenAsync();
 
-                cmd.CommandText = "SELECT ID, IDUSUARIO, IDALBUN, NOMBRE,GENERO,LETRA,FECHAPUBLICACION,LINK FROM CANCIONES WHERE ESTADO='A' AND NOMBRE LIKE :P_NOMBRE";
+                cmd.CommandText = "SELECT ID, IDUSUARIO, IDALBUN, NOMBRE,NOMBREAUTOR,GENERO,LETRA,FECHAPUBLICACION,LINK FROM CANCIONES WHERE ESTADO='A' AND NOMBRE LIKE :P_NOMBRE";
                 cmd.Parameters.Clear();
                 cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Varchar2, Direction = ParameterDirection.Input, ParameterName = "P_NOMBRE", Value = "%"+nombre+"%" });
                 await cmd.ExecuteNonQueryAsync();
@@ -411,10 +415,11 @@ namespace Core.Loyal.Providers
                             IdUsuario = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[1]) ? Convert.ToInt64(item.ItemArray[1]) : 0,
                             IdAlbun = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[2]) ? Convert.ToInt64(item.ItemArray[2]) : 0,
                             Nombre = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[3]) ? Convert.ToString(item.ItemArray[3]) : "SIN NOMBRE",
-                            Genero = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[4]) ? Convert.ToString(item.ItemArray[4]) : "SIN GENERO",
-                            Letra = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[5]) ? Convert.ToString(item.ItemArray[5]).Replace("-", "\n") : "SIN LETRA",
-                            FechaPublicacion = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[6]) ? Convert.ToDateTime(item.ItemArray[6]) : null,
-                            Link = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[7]) ? Convert.ToString(item.ItemArray[7]) : "SIN LINK"
+                            NombreAutor = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[4]) ? Convert.ToString(item.ItemArray[4]) : "SIN NOMBRE",
+                            Genero = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[5]) ? Convert.ToString(item.ItemArray[5]) : "SIN GENERO",
+                            Letra = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[6]) ? Convert.ToString(item.ItemArray[6]).Replace("-", "\n") : "SIN LETRA",
+                            FechaPublicacion = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[7]) ? Convert.ToDateTime(item.ItemArray[7]) : null,
+                            Link = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[8]) ? Convert.ToString(item.ItemArray[8]) : "SIN LINK"
                         };
 
                         _outs.Add(cancionModel);
@@ -918,7 +923,7 @@ namespace Core.Loyal.Providers
             {
                 await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.OpenAsync();
 
-                cmd.CommandText = "SELECT ID, IDUSUARIO, IDALBUN, NOMBRE,GENERO,LETRA,FECHAPUBLICACION,LINK,IDCANCION FROM INTERPRETACIONES WHERE ESTADO='A'";
+                cmd.CommandText = "SELECT ID, IDUSUARIO, IDALBUN, NOMBRE,NOMBREAUTOR,GENERO,LETRA,FECHAPUBLICACION,LINK,IDCANCION FROM INTERPRETACIONES WHERE ESTADO='A'";
                 await cmd.ExecuteNonQueryAsync();
 
                 var adapter = new OracleDataAdapter(cmd);
@@ -937,11 +942,12 @@ namespace Core.Loyal.Providers
                             IdUsuario = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[1]) ? Convert.ToInt64(item.ItemArray[1]) : 0,
                             IdAlbun = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[2]) ? Convert.ToInt64(item.ItemArray[2]) : 0,
                             Nombre = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[3]) ? Convert.ToString(item.ItemArray[3]) : "SIN NOMBRE",
-                            Genero = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[4]) ? Convert.ToString(item.ItemArray[4]) : "SIN GENERO",
-                            Letra = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[5]) ? Convert.ToString(item.ItemArray[5]).Replace("-", "\n") : "SIN LETRA",
-                            FechaPublicacion = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[6]) ? Convert.ToDateTime(item.ItemArray[6]) : null,
-                            Link = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[7]) ? Convert.ToString(item.ItemArray[7]) : "SIN LINK",
-                            IdCancion = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[8]) ? Convert.ToInt64(item.ItemArray[8]) : 0
+                            NombreAutor = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[4]) ? Convert.ToString(item.ItemArray[4]) : "SIN NOMBRE",
+                            Genero = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[5]) ? Convert.ToString(item.ItemArray[5]) : "SIN GENERO",
+                            Letra = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[6]) ? Convert.ToString(item.ItemArray[6]).Replace("-", "\n") : "SIN LETRA",
+                            FechaPublicacion = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[7]) ? Convert.ToDateTime(item.ItemArray[7]) : null,
+                            Link = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[8]) ? Convert.ToString(item.ItemArray[8]) : "SIN LINK",
+                            IdCancion = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[9]) ? Convert.ToInt64(item.ItemArray[9]) : 0
                         };
 
                         _outs.Add(interpretacionModel);
@@ -967,7 +973,7 @@ namespace Core.Loyal.Providers
             {
                 await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.OpenAsync();
 
-                cmd.CommandText = "SELECT ID, IDUSUARIO, IDALBUN, NOMBRE,GENERO,LETRA,FECHAPUBLICACION,LINK,IDCANCION FROM INTERPRETACIONES WHERE ESTADO='A' AND NOMBRE LIKE :P_NOMBRE";
+                cmd.CommandText = "SELECT ID, IDUSUARIO, IDALBUN, NOMBRE,NOMBREAUTOR,GENERO,LETRA,FECHAPUBLICACION,LINK,IDCANCION FROM INTERPRETACIONES WHERE ESTADO='A' AND NOMBRE LIKE :P_NOMBRE";
                 cmd.Parameters.Clear();
                 cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Varchar2, Direction = ParameterDirection.Input, ParameterName = "P_NOMBRE", Value = "%" + nombre + "%" });
                 await cmd.ExecuteNonQueryAsync();
@@ -988,11 +994,12 @@ namespace Core.Loyal.Providers
                             IdUsuario = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[1]) ? Convert.ToInt64(item.ItemArray[1]) : 0,
                             IdAlbun = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[2]) ? Convert.ToInt64(item.ItemArray[2]) : 0,
                             Nombre = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[3]) ? Convert.ToString(item.ItemArray[3]) : "SIN NOMBRE",
-                            Genero = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[4]) ? Convert.ToString(item.ItemArray[4]) : "SIN GENERO",
-                            Letra = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[5]) ? Convert.ToString(item.ItemArray[5]).Replace("-", "\n") : "SIN LETRA",
-                            FechaPublicacion = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[6]) ? Convert.ToDateTime(item.ItemArray[6]) : null,
-                            Link = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[7]) ? Convert.ToString(item.ItemArray[7]) : "SIN LINK",
-                            IdCancion = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[8]) ? Convert.ToInt64(item.ItemArray[8]) : 0
+                            NombreAutor = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[4]) ? Convert.ToString(item.ItemArray[4]) : "SIN NOMBRE",
+                            Genero = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[5]) ? Convert.ToString(item.ItemArray[5]) : "SIN GENERO",
+                            Letra = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[6]) ? Convert.ToString(item.ItemArray[6]).Replace("-", "\n") : "SIN LETRA",
+                            FechaPublicacion = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[7]) ? Convert.ToDateTime(item.ItemArray[7]) : null,
+                            Link = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[8]) ? Convert.ToString(item.ItemArray[8]) : "SIN LINK",
+                            IdCancion = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[9]) ? Convert.ToInt64(item.ItemArray[9]) : 0
                         };
 
                         _outs.Add(interpretacionModel);
@@ -1017,7 +1024,7 @@ namespace Core.Loyal.Providers
             {
                 await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.OpenAsync();
 
-                cmd.CommandText = "SELECT ID, IDUSUARIO, IDALBUN, NOMBRE,GENERO,LETRA,FECHAPUBLICACION,LINK,IDCANCION FROM INTERPRETACIONES WHERE ESTADO='A' AND IDUSUARIO=:P_IDUSUARIO";
+                cmd.CommandText = "SELECT ID, IDUSUARIO, IDALBUN, NOMBRE,NOMBREAUTOR,GENERO,LETRA,FECHAPUBLICACION,LINK,IDCANCION FROM INTERPRETACIONES WHERE ESTADO='A' AND IDUSUARIO=:P_IDUSUARIO";
                 cmd.Parameters.Clear();
                 cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDUSUARIO", Value = idUsuario });
                 await cmd.ExecuteNonQueryAsync();
@@ -1038,11 +1045,12 @@ namespace Core.Loyal.Providers
                             IdUsuario = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[1]) ? Convert.ToInt64(item.ItemArray[1]) : 0,
                             IdAlbun = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[2]) ? Convert.ToInt64(item.ItemArray[2]) : 0,
                             Nombre = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[3]) ? Convert.ToString(item.ItemArray[3]) : "SIN NOMBRE",
-                            Genero = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[4]) ? Convert.ToString(item.ItemArray[4]) : "SIN GENERO",
-                            Letra = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[5]) ? Convert.ToString(item.ItemArray[5]).Replace("-", "\n") : "SIN LETRA",
-                            FechaPublicacion = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[6]) ? Convert.ToDateTime(item.ItemArray[6]) : null,
-                            Link = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[7]) ? Convert.ToString(item.ItemArray[7]) : "SIN LINK",
-                            IdCancion = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[8]) ? Convert.ToInt64(item.ItemArray[8]) : 0
+                            NombreAutor = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[4]) ? Convert.ToString(item.ItemArray[4]) : "SIN NOMBRE",
+                            Genero = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[5]) ? Convert.ToString(item.ItemArray[5]) : "SIN GENERO",
+                            Letra = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[6]) ? Convert.ToString(item.ItemArray[6]).Replace("-", "\n") : "SIN LETRA",
+                            FechaPublicacion = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[7]) ? Convert.ToDateTime(item.ItemArray[7]) : null,
+                            Link = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[8]) ? Convert.ToString(item.ItemArray[8]) : "SIN LINK",
+                            IdCancion = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[9]) ? Convert.ToInt64(item.ItemArray[9]) : 0
                         };
 
                         _outs.Add(interpretacionModel);
@@ -1091,13 +1099,14 @@ namespace Core.Loyal.Providers
                         
                         cmd.CommandText = @"
                                         INSERT INTO INTERPRETACIONES
-                                        (ID, IDUSUARIO, IDALBUN, NOMBRE,GENERO,LETRA,FECHAPUBLICACION,LINK,ESTADO,IDCANCION)
-                                        VALUES(SEQUENCECANCION.NEXTVAL,:P_IDUSUARIO,:P_IDALBUN ,:P_NOMBRE, :P_GENERO, :P_LETRA,CURRENT_DATE,:P_LINK,'A',:P_IDCANCION)
+                                        (ID, IDUSUARIO, IDALBUN, NOMBRE, NOMBREAUTOR,GENERO,LETRA,FECHAPUBLICACION,LINK,ESTADO,IDCANCION)
+                                        VALUES(SEQUENCECANCION.NEXTVAL,:P_IDUSUARIO,:P_IDALBUN ,:P_NOMBRE, :P_NOMBREAUTOR, :P_GENERO, :P_LETRA,CURRENT_DATE,:P_LINK,'A',:P_IDCANCION)
                                         ";
                         cmd.Parameters.Clear();
                         cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDUSUARIO", Value = interpretacion.IdUsuario });
                         cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDALBUN", Value = interpretacion.IdAlbun });
                         cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Varchar2, Direction = ParameterDirection.Input, ParameterName = "P_NOMBRE", Value = interpretacion.Nombre });
+                        cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Varchar2, Direction = ParameterDirection.Input, ParameterName = "P_NOMBREAUTOR", Value = interpretacion.NombreAutor });
                         cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Varchar2, Direction = ParameterDirection.Input, ParameterName = "P_GENERO", Value = interpretacion.Genero });
                         cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Varchar2, Direction = ParameterDirection.Input, ParameterName = "P_LETRA", Value = interpretacion.Letra });
                         cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Varchar2, Direction = ParameterDirection.Input, ParameterName = "P_LINK", Value = interpretacion.Link });
@@ -1443,7 +1452,7 @@ namespace Core.Loyal.Providers
             {
                 await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.OpenAsync();
 
-                cmd.CommandText = "SELECT ID, IDUSUARIO, IDALBUN, NOMBRE,GENERO,LETRA,FECHAPUBLICACION,LINK,IDCANCION FROM INTERPRETACIONES WHERE ID=:P_ID AND ESTADO='A'";
+                cmd.CommandText = "SELECT ID, IDUSUARIO, IDALBUN, NOMBRE,NOMBREAUTOR,GENERO,LETRA,FECHAPUBLICACION,LINK,IDCANCION FROM INTERPRETACIONES WHERE ID=:P_ID AND ESTADO='A'";
                 cmd.Parameters.Clear();
                 cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Varchar2, Direction = ParameterDirection.Input, ParameterName = "P_ID", Value = id });
                 await cmd.ExecuteNonQueryAsync();
@@ -1464,11 +1473,12 @@ namespace Core.Loyal.Providers
                             IdUsuario = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[1]) ? Convert.ToInt64(item.ItemArray[1]) : 0,
                             IdAlbun = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[2]) ? Convert.ToInt64(item.ItemArray[2]) : 0,
                             Nombre = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[3]) ? Convert.ToString(item.ItemArray[3]) : "SIN NOMBRE",
-                            Genero = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[4]) ? Convert.ToString(item.ItemArray[4]) : "SIN GENERO",
-                            Letra = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[5]) ? Convert.ToString(item.ItemArray[5]).Replace("-", "\n") : "SIN LETRA",
-                            FechaPublicacion = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[6]) ? Convert.ToDateTime(item.ItemArray[6]) : null,
-                            Link = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[7]) ? Convert.ToString(item.ItemArray[7]) : "SIN LINK",
-                            IdCancion = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[8]) ? Convert.ToInt64(item.ItemArray[8]) : 0
+                            NombreAutor = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[4]) ? Convert.ToString(item.ItemArray[4]) : "SIN NOMBRE",
+                            Genero = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[5]) ? Convert.ToString(item.ItemArray[5]) : "SIN GENERO",
+                            Letra = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[6]) ? Convert.ToString(item.ItemArray[6]).Replace("-", "\n") : "SIN LETRA",
+                            FechaPublicacion = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[7]) ? Convert.ToDateTime(item.ItemArray[7]) : null,
+                            Link = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[8]) ? Convert.ToString(item.ItemArray[8]) : "SIN LINK",
+                            IdCancion = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[9]) ? Convert.ToInt64(item.ItemArray[9]) : 0
                         };
 
                         _outs.Add(interpretacionModel);
@@ -1984,7 +1994,7 @@ namespace Core.Loyal.Providers
             {
                 await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.OpenAsync();
 
-                cmd.CommandText = "SELECT c.ID, c.NOMBRE , c.LINK FROM CANCIONES c JOIN CANCIONESFAVORITAS cf ON c.ID=cf.IDCANCION WHERE c.ESTADO='A' AND cf.IDUSUARIO=:P_IDUSUARIO AND cf.TIPO='C'";
+                cmd.CommandText = "SELECT c.ID, c.NOMBRE,c.NOMBREAUTOR ,c.IDUSUARIO, c.LINK FROM CANCIONES c JOIN CANCIONESFAVORITAS cf ON c.ID=cf.IDCANCION WHERE c.ESTADO='A' AND cf.IDUSUARIO=:P_IDUSUARIO AND cf.TIPO='C'";
                 cmd.Parameters.Clear();
                 cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDUSUARIO", Value = idUsuario });
                 await cmd.ExecuteNonQueryAsync();
@@ -2003,7 +2013,9 @@ namespace Core.Loyal.Providers
                         {
                             Id = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[0]) ? Convert.ToInt64(item.ItemArray[0]) : 0,
                             Nombre = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[1]) ? Convert.ToString(item.ItemArray[1]) : "SIN NOMBRE",
-                            Link = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[2]) ? Convert.ToString(item.ItemArray[2]) : "SIN LINK"
+                            NombreAutor = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[2]) ? Convert.ToString(item.ItemArray[2]) : "SIN NOMBRE",
+                            IdUsuario = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[3]) ? Convert.ToInt64(item.ItemArray[3]) : 0,
+                            Link = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[4]) ? Convert.ToString(item.ItemArray[4]) : "SIN LINK"
                         };
 
                         _outs.Add(cancionModel);
@@ -2031,7 +2043,7 @@ namespace Core.Loyal.Providers
             {
                 await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.OpenAsync();
 
-                cmd.CommandText = "SELECT c.ID, c.NOMBRE , c.LINK FROM CANCIONES c JOIN CANCIONESFAVORITAS cf ON c.ID=cf.IDCANCION WHERE c.ESTADO='A' AND cf.IDUSUARIO=:P_IDUSUARIO AND cf.TIPO='I'";
+                cmd.CommandText = "SELECT c.ID, c.NOMBRE, c.NOMBREAUTOR,c.IDUSUARIO, c.LINK FROM CANCIONES c JOIN CANCIONESFAVORITAS cf ON c.ID=cf.IDCANCION WHERE c.ESTADO='A' AND cf.IDUSUARIO=:P_IDUSUARIO AND cf.TIPO='I'";
                 cmd.Parameters.Clear();
                 cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDUSUARIO", Value = idUsuario });
                 await cmd.ExecuteNonQueryAsync();
@@ -2050,7 +2062,9 @@ namespace Core.Loyal.Providers
                         {
                             Id = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[0]) ? Convert.ToInt64(item.ItemArray[0]) : 0,
                             Nombre = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[1]) ? Convert.ToString(item.ItemArray[1]) : "SIN NOMBRE",
-                            Link = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[2]) ? Convert.ToString(item.ItemArray[2]) : "SIN LINK"
+                            NombreAutor = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[2]) ? Convert.ToString(item.ItemArray[2]) : "SIN NOMBRE",
+                            IdUsuario = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[3]) ? Convert.ToInt64(item.ItemArray[3]) : 0,
+                            Link = !Object.ReferenceEquals(System.DBNull.Value, item.ItemArray[4]) ? Convert.ToString(item.ItemArray[4]) : "SIN LINK"
                         };
 
                         _outs.Add(cancionModel);
