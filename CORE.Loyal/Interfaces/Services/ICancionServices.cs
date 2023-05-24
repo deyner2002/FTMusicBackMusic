@@ -6,7 +6,7 @@ namespace CORE.Loyal.Interfaces.Services
 {
     public interface ICancionServices
     {
-        Task<List<CancionModel>> GetListCanciones();
+        Task<List<CancionModel>> GetListCanciones(int limiteInferiorConsulta, int limiteSuperiorConsulta);
         Task<long> SaveCancion(CancionModel user);
         Task<long> SaveInterpretacion(InterpretacionModel user);
         Task<CancionModel> ConsultarCancion(int id);
@@ -30,7 +30,7 @@ namespace CORE.Loyal.Interfaces.Services
         Task<long> ConsultarNumeroNoMegustaPorCancion(int idCancion);
         Task<CancionCompletaDTO> ConsultarCancionCompleta(int idCancion);
         Task<InterpretacionCompletaDTO> ConsultarInterpretacionCompleta(int id);
-        Task<List<InterpretacionModel>> GetListInterpretaciones();
+        Task<List<InterpretacionModel>> GetListInterpretaciones(int limiteInferiorConsulta, int limiteSuperiorConsulta);
         Task<long> ValidarLikeYDislikePorUsuario(int IdUsuario, int IdCancion);
         Task<long> DesactivarComentario(int id);
         Task<long> ModificarComentario(ComentarioModel comentario);

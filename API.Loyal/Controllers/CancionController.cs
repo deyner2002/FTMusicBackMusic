@@ -23,7 +23,7 @@ namespace Api.Loyal.Controllers
 
         [HttpGet]
         [Route("GetList")]
-        public async Task<ResponseModels> GetListCanciones()
+        public async Task<ResponseModels> GetListCanciones(int limiteInferiorConsulta, int limiteSuperiorConsulta)
         {
             ResponseModels response = new ResponseModels();
             int intentosRestantes = 3;
@@ -31,7 +31,7 @@ namespace Api.Loyal.Controllers
             {
                 try
             {
-                response.Datos = _provider.GetListCanciones().Result;
+                response.Datos = _provider.GetListCanciones(limiteInferiorConsulta,limiteSuperiorConsulta).Result;
                 if (response.Datos != null)
                 {
                     intentosRestantes = 0;
@@ -683,7 +683,7 @@ namespace Api.Loyal.Controllers
 
         [HttpGet]
         [Route("GetListInterpretaciones")]
-        public async Task<ResponseModels> GetListInterpretaciones()
+        public async Task<ResponseModels> GetListInterpretaciones(int limiteInferiorConsulta, int limiteSuperiorConsulta)
         {
             ResponseModels response = new ResponseModels();
             int intentosRestantes = 3;
@@ -691,7 +691,7 @@ namespace Api.Loyal.Controllers
             {
                 try
             {
-                response.Datos = _provider.GetListInterpretaciones().Result;
+                response.Datos = _provider.GetListInterpretaciones(limiteInferiorConsulta, limiteSuperiorConsulta).Result;
                 if (response.Datos != null)
                 {
                     intentosRestantes = 0;

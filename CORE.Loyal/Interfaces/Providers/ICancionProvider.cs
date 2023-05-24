@@ -6,8 +6,8 @@ namespace CORE.Loyal.Interfaces.Providers
 {
     public interface ICancionProvider
     {
-        Task<List<CancionModel>> GetListCanciones();
-        Task<List<InterpretacionModel>> GetListInterpretaciones();
+        Task<List<CancionModel>> GetListCanciones(int limiteInferiorConsulta, int limiteSuperiorConsulta);
+        Task<List<InterpretacionModel>> GetListInterpretaciones(int limiteInferiorConsulta, int limiteSuperiorConsulta);
         Task<long> SaveCancion(CancionModel user);
         Task<long> SaveInterpretacion(InterpretacionModel user);
         Task<long> ModificarInterpretacion(InterpretacionModel interpretacion);

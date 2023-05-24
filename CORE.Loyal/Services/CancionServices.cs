@@ -18,12 +18,12 @@ namespace Core.Loyal.Services
             _providerComentario = providerComentario;
             _providerLike = providerLike;
         }
-        public async Task<List<CancionModel>> GetListCanciones()
+        public async Task<List<CancionModel>> GetListCanciones(int limiteInferiorConsulta, int limiteSuperiorConsulta)
         {
             List<CancionModel> list = new List<CancionModel>(); 
             try
             {
-               list = await _provider.GetListCanciones();
+               list = await _provider.GetListCanciones(limiteInferiorConsulta,limiteSuperiorConsulta);
             }
             catch (Exception ex)
             {
@@ -283,12 +283,12 @@ namespace Core.Loyal.Services
 
 
 
-        public async Task<List<InterpretacionModel>> GetListInterpretaciones()
+        public async Task<List<InterpretacionModel>> GetListInterpretaciones(int limiteInferiorConsulta, int limiteSuperiorConsulta)
         {
             List<InterpretacionModel> list = new List<InterpretacionModel>();
             try
             {
-                list = await _provider.GetListInterpretaciones();
+                list = await _provider.GetListInterpretaciones(limiteInferiorConsulta, limiteSuperiorConsulta);
             }
             catch (Exception ex)
             {

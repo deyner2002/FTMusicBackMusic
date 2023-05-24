@@ -22,14 +22,16 @@ namespace Core.Loyal.Providers
             cmd = new OracleCommand();
             cmd.Connection = OracleDBConnectionSingleton.OracleDBConnection.oracleConnection;
         }
-        public async Task<List<CancionModel>> GetListCanciones()
+        public async Task<List<CancionModel>> GetListCanciones(int limiteInferiorConsulta,int limiteSuperiorConsulta)
         {
             var _outs = new List<CancionModel>();
             try
             {
                 await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.OpenAsync();
                 
-                cmd.CommandText = "SELECT ID, IDUSUARIO, IDALBUN, NOMBRE,NOMBREAUTOR,GENERO,LETRA,FECHAPUBLICACION,LINK FROM CANCIONES WHERE ESTADO='A'";
+                cmd.CommandText = "SELECT * FROM ( " +
+                                                    "SELECT c.ID, c.IDUSUARIO, c.IDALBUN, c.NOMBRE,c.NOMBREAUTOR,c.GENERO,c.LETRA,c.FECHAPUBLICACION,c.LINK, ROW_NUMBER() OVER(ORDER BY ID ) AS RN" +
+                                                    " FROM CANCIONES c WHERE ESTADO='A') WHERE RN >="+limiteInferiorConsulta +" AND RN <= "+limiteSuperiorConsulta;
                 await cmd.ExecuteNonQueryAsync();
 
                 var adapter = new OracleDataAdapter(cmd);
@@ -916,14 +918,16 @@ namespace Core.Loyal.Providers
 
 
 
-        public async Task<List<InterpretacionModel>> GetListInterpretaciones()
+        public async Task<List<InterpretacionModel>> GetListInterpretaciones(int limiteInferiorConsulta, int limiteSuperiorConsulta)
         {
             var _outs = new List<InterpretacionModel>();
             try
             {
                 await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.OpenAsync();
 
-                cmd.CommandText = "SELECT ID, IDUSUARIO, IDALBUN, NOMBRE,NOMBREAUTOR,GENERO,LETRA,FECHAPUBLICACION,LINK,IDCANCION FROM INTERPRETACIONES WHERE ESTADO='A'";
+                cmd.CommandText = "SELECT * FROM (" +
+                                                 "SELECT i.ID, i.IDUSUARIO, i.IDALBUN, i.NOMBRE,i.NOMBREAUTOR,i.GENERO,i.LETRA,i.FECHAPUBLICACION,i.LINK,i.IDCANCION,ROW_NUMBER() OVER(ORDER BY ID ) AS RN " +
+                                                 " FROM INTERPRETACIONES i WHERE ESTADO='A') WHERE RN >="+limiteInferiorConsulta +" AND RN <= "+limiteSuperiorConsulta;
                 await cmd.ExecuteNonQueryAsync();
 
                 var adapter = new OracleDataAdapter(cmd);
