@@ -2168,5 +2168,58 @@ namespace Core.Loyal.Providers
 
 
 
+
+
+
+
+        public async Task<long> ValidarCancionEnFavoritos(int idUsuario, int idCancion)
+        {
+            long consecutivo = 0;
+            try
+            {
+                if (idUsuario != null || idCancion != null)
+                {
+                    cmd.CommandText = @"
+                                        SELECT * FROM CANCIONESFAVORITAS WHERE IDUSUARIO=:P_IDUSUARIO AND IDCANCION=:P_IDCANCION
+                                        ";
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDUSUARIO", Value = idUsuario });
+                    cmd.Parameters.Add(new OracleParameter { OracleDbType = OracleDbType.Long, Direction = ParameterDirection.Input, ParameterName = "P_IDCANCION", Value = idCancion });
+                    var adapter = new OracleDataAdapter(cmd);
+                    var data = new DataSet("Datos");
+                    adapter.Fill(data);
+                    if (data.Tables[0].Rows.Count == 0)
+                    {
+                        consecutivo = 1;//no se encuentra en favoritos
+                    }
+                    else
+                    {
+                        consecutivo = 2;//se encuentra en favoritos
+                    }
+                    await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.CloseAsync();
+                    return consecutivo;
+                }
+                else
+                {
+                    return -2;//campos vacios
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await OracleDBConnectionSingleton.OracleDBConnection.oracleConnection.CloseAsync();
+                Plugins.WriteExceptionLog(ex);
+                return -1;//error
+            }
+        }
+
+
+
+
+
+
+
+
+
     }
 }

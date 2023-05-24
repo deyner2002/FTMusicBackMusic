@@ -585,5 +585,20 @@ namespace Core.Loyal.Services
             return salida;
         }
 
+
+        public async Task<long> ValidarCancionEnFavoritos(int idUsuario, int idCancion)
+        {
+            long salida = -1;
+            try
+            {
+                salida = await _provider.ValidarCancionEnFavoritos(idUsuario, idCancion);
+            }
+            catch (Exception ex)
+            {
+                Plugins.WriteExceptionLog(ex);
+            }
+            return salida;
+        }
+
     }
 }

@@ -1676,5 +1676,62 @@ namespace Api.Loyal.Controllers
 
 
 
+        [HttpPost]
+        [Route("ValidarCancionEnFavoritos")]
+        public async Task<ResponseModels> ValidarCancionEnFavoritos(int idUsuario, int idCancion)
+        {
+            ResponseModels response = new ResponseModels();
+            int intentosRestantes = 3;
+            while (intentosRestantes > 0)
+            {
+                try
+                {
+                    response.Datos = _provider.ValidarCancionEnFavoritos(idUsuario, idCancion).Result;
+                    long codigoRespuesta = long.Parse(response.Datos.ToString());
+                    if (codigoRespuesta == 1)
+                    {
+                        response.IsError = false;
+                        response.Mensaje = "La cancion consultada no se encuentra en favoritos";
+                        intentosRestantes = 0;
+                    }
+                    else
+                    {
+
+                        if (codigoRespuesta == 2)
+                        {
+                            response.IsError = false;
+                            response.Mensaje = "La cancion consultada se encuentra en favoritos";
+                            intentosRestantes = 0;
+                        }
+                        if (codigoRespuesta == -2)
+                        {
+                            response.IsError = true;
+                            response.Mensaje = "campos obligatorios se encuentran vacios";
+                            intentosRestantes = 0;
+                        }
+                        if (codigoRespuesta == -1)
+                        {
+                            intentosRestantes--;
+                            response.IsError = true;
+                            response.Mensaje = "Error";
+                            await Task.Delay(1000);
+                        }
+                    }
+
+
+                }
+                catch (Exception ex)
+                {
+                    intentosRestantes--;
+                    Plugins.WriteExceptionLog(ex);
+                    response.IsError = true;
+                    response.Mensaje = "Error en obtener datos";
+                    await Task.Delay(1000);
+                }
+            }
+            return response;
+        }
+
+
     }
 }
