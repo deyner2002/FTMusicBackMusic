@@ -26,6 +26,7 @@ namespace CORE.Loyal.Models.DTOs
             Letra = cancion.Letra;
             FechaPublicacion = cancion.FechaPublicacion;
             Link = cancion.Link;
+            NombreAutor = cancion.NombreAutor;
                 }
         }
     }
